@@ -8,6 +8,7 @@
 import { gameState } from './settings.js';
 import { gameOver, updateGameState } from './game.js';
 import { addLogEntry } from './log.js';
+import { getContentmentEffects } from './contentment.js';
 
 // Move this outside the class to be accessible by all instances
 const usedNames = new Set();
@@ -49,10 +50,17 @@ export class PartyMember {
       return;
     }
 
+    // Apply contentment effects to energy consumption
+    const contentmentEffects = getContentmentEffects();
+    const energyConsumptionModifier = 1 + (contentmentEffects.energyConsumption || 0);
+
     // Decrease hunger, thirst, and energy
     this.hunger = Math.max(0, this.hunger - this.traits.hungerRate);
     this.thirst = Math.max(0, this.thirst - this.traits.thirstRate);
-    this.energy = Math.max(0, Math.min(100, this.energy - this.traits.energyRate)); // Ensure energy doesn't exceed 100
+
+    // Apply contentment modifier to energy consumption
+    const energyDecrease = this.traits.energyRate * energyConsumptionModifier;
+    this.energy = Math.max(0, Math.min(100, this.energy - energyDecrease));
 
     // Calculate health loss
     const healthLoss = (this.hunger <= 0 || this.thirst <= 0 || this.energy <= 0) ? 2 : 0;

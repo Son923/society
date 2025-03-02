@@ -2,6 +2,7 @@ import { gameState } from './settings.js';
 import { addLogEntry } from './log.js';
 import { updateGameState } from './game.js';
 import { getIllnessChanceReduction } from './medicaltent.js';
+import { increaseContentment, decreaseContentment } from './contentment.js';
 
 const WHISPERS = [
   "The shadows grow longer...",
@@ -269,6 +270,75 @@ const RANDOM_EVENTS = [
       state.wood += resourceChange;
       return `A quantum fluctuation alters reality! (${resourceChange > 0 ? '+' : ''}${resourceChange} to all resources)`;
     }, type: "neutral"
+  },
+  {
+    name: "Moment of Hope",
+    effect: (state) => {
+      increaseContentment(10, "moment of hope");
+      return "The party shares stories of better times, boosting everyone's spirits. (+10 contentment)";
+    },
+    type: "positive"
+  },
+  {
+    name: "Successful Hunt",
+    effect: (state) => {
+      state.food += 30;
+      increaseContentment(5, "successful hunt");
+      return "A successful hunt provides extra food and lifts the party's spirits! (+30 🥩, +5 contentment)";
+    },
+    type: "positive"
+  },
+  {
+    name: "Beautiful Sunset",
+    effect: (state) => {
+      increaseContentment(8, "beautiful sunset");
+      return "A breathtaking sunset reminds everyone of the beauty still left in the world. (+8 contentment)";
+    },
+    type: "positive"
+  },
+  {
+    name: "Grim Reminder",
+    effect: (state) => {
+      decreaseContentment(10, "grim reminder");
+      return "The party stumbles upon evidence of the apocalypse's devastation, dampening everyone's mood. (-10 contentment)";
+    },
+    type: "negative"
+  },
+  {
+    name: "Argument",
+    effect: (state) => {
+      decreaseContentment(8, "party argument");
+      return "An argument breaks out among party members over dwindling resources. (-8 contentment)";
+    },
+    type: "negative"
+  },
+  {
+    name: "Nightmare",
+    effect: (state) => {
+      decreaseContentment(5, "shared nightmare");
+      return "Several party members experience the same disturbing nightmare, leaving everyone on edge. (-5 contentment)";
+    },
+    type: "negative"
+  },
+  {
+    name: "Found Supplies",
+    effect: (state) => {
+      state.food += 15;
+      state.water += 15;
+      state.wood += 15;
+      increaseContentment(12, "found supplies");
+      return "The party discovers a cache of supplies hidden away! (+15 🥩, +15 💧, +15 🌲, +12 contentment)";
+    },
+    type: "positive"
+  },
+  {
+    name: "Harsh Weather",
+    effect: (state) => {
+      state.wood -= 10;
+      decreaseContentment(7, "harsh weather");
+      return "Harsh weather conditions force the party to burn extra wood for warmth and damages morale. (-10 🌲, -7 contentment)";
+    },
+    type: "negative"
   }
 ];
 

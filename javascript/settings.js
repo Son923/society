@@ -30,6 +30,13 @@ export const initialGameState = {
   water: 0,
   wood: 0,
   knowledgePoints: 0,
+  contentmentLevel: 50,
+  maxContentment: 100,
+  contentmentEffects: {
+    resourceEfficiency: 0,
+    energyConsumption: 0,
+    corruptionResistance: 0
+  },
   party: [],
   upgrades: {},
   lumberMill: {

@@ -16,6 +16,10 @@
     color: var(--green);
   }
 
+  &.light-green {
+    color: var(--light-green);
+  }
+
   &.light-yellow {
     color: var(--light-yellow);
   }

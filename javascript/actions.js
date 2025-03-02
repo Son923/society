@@ -2,6 +2,7 @@ import { gameState } from './settings.js';
 import { updateGameState } from './game.js';
 import { addLogEntry } from './log.js';
 import { checkUpgradeAvailability } from './upgrades.js';
+import { getContentmentEffects } from './contentment.js';
 
 /**
  * Selects the best available party member for an action.
@@ -37,7 +38,16 @@ function performResourceAction(resourceType, minAmount, maxAmount) {
     return;
   }
 
-  const amountGathered = Math.floor(Math.random() * (maxAmount - minAmount + 1)) + minAmount;
+  // Apply contentment effects to resource gathering
+  const contentmentEffects = getContentmentEffects();
+  const contentmentModifier = 1 + (contentmentEffects.resourceEfficiency || 0);
+
+  // Calculate base amount
+  let amountGathered = Math.floor(Math.random() * (maxAmount - minAmount + 1)) + minAmount;
+
+  // Apply contentment modifier
+  amountGathered = Math.max(1, Math.floor(amountGathered * contentmentModifier));
+
   gameState[resourceType] += amountGathered;
   gameState.totalResourcesGathered[resourceType] += amountGathered;
   gameState.totalActions++;

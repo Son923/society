@@ -23,6 +23,7 @@ import { checkForRandomEvent, initializeRandomEvents } from './randomevents.js';
 import { checkTutorials, initializeTutorials, saveTutorialState } from './tutorial.js';
 import { runAutomations } from './automation.js';
 import { applyMedicalTentEffects } from './medicaltent.js';
+import { initializeContentment, checkContentmentEffects, updateContentmentDisplay, getContentmentEffects } from './contentment.js';
 
 // Debug mode flag
 let isDebugMode = false;
@@ -85,6 +86,7 @@ export function initializeGame() {
   initializeWatchtower();
   initializeRandomEvents();
   initializeTutorials();
+  initializeContentment();
 
   // Check for debug mode
   if (window.location.hash === '#debug') {
@@ -199,6 +201,14 @@ export function updateGameState() {
   checkForRandomEvent();
   applyMedicalTentEffects();
   updateFarmingUI();
+
+  // Check contentment effects once per day
+  if (previousState.day !== gameState.day) {
+    checkContentmentEffects();
+  }
+
+  // Always update the contentment display
+  updateContentmentDisplay();
 }
 
 /**
@@ -232,6 +242,12 @@ function updateResourceDisplay() {
   ['food', 'water', 'wood', 'knowledgePoints'].forEach((resource, index) => {
     resourceElements[index].textContent = gameState[resource];
   });
+
+  // Update contentment display if it exists
+  const contentmentDisplay = document.getElementById('contentment-display');
+  if (contentmentDisplay) {
+    updateContentmentDisplay();
+  }
 }
 
 /**

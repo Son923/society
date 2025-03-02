@@ -1,0 +1,47 @@
+/* 
+ * Contentment System Styles
+ * Styles for the contentment system UI elements
+ */
+
+.contentment-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1em;
+  border-right: var(--border-thickness) solid var(--text-color);
+  min-width: 60px;
+}
+
+.contentment-display i {
+  font-size: 1.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.contentment-display span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Responsive styles */
+@media (max-width: 1100px) {
+  .contentment-display {
+    border-left: none;
+    border-top: var(--border-thickness) solid var(--text-color);
+    width: 100%;
+    padding: 0.5em 1em;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 1em;
+  }
+
+  .contentment-display i {
+    margin-bottom: 0;
+  }
+
+  .contentment-display span {
+    margin-bottom: 0;
+    margin-right: 1em;
+  }
+}

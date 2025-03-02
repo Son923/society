@@ -17,18 +17,17 @@ Add a new resource called "knowledge points" to the game by:
 7. Add notification in log.js when knowledge points are gained
 ```
 
-
-### 2. Implement Corruption Meter System
+### 2. Implement Contentment System ✅
 ```
-Create a corruption system that affects gameplay:
-1. Create new file javascript/corruption.js with functions: initializeCorruption(), increaseCorruption(), decreaseCorruption(), getCorruptionEffects()
-2. Add corruptionLevel: 0 and maxCorruption: 100 to initialGameState in settings.js
-3. Add corruption meter UI bar in index.html below resources with purple-black color scheme
-4. Update game.js to call checkCorruptionEffects() in updateGameState()
-5. Add logic to increase corruption by 0.5 every 24 hours and additional 0.5 when resources fall below 10% of capacity
-6. Apply corruption effects: For each 10 points of corruption, reduce resource gathering efficiency by 3%
-7. Create corruptionEffects in settings.js to track specific effects
-8. Add corruption messages to randomevents.js when corruption reaches certain thresholds (25, 50, 75, 100)
+Create a contentment system that affects gameplay:
+1. Create new file javascript/contentment.js with functions: initializeContentment(), increaseContentment(), decreaseContentment(), getContentmentEffects()
+2. Add contentmentLevel: 50 and maxContentment: 100 to initialGameState in settings.js
+3. Add contentment UI in index.html next to the day/hour/time block that makes use of lucide emoji icons with green-yellow-red color scheme
+4. Update game.js to call checkContentmentEffects() in updateGameState()
+5. Add logic to decrease contentment by 0.5 every 24 hours when resources fall below 10% of capacity, and increase by 0.5 when resources are above 50% capacity
+6. Apply contentment effects: For each 10 points below 50 contentment, reduce resource gathering efficiency by 3%
+7. Create contentmentEffects in settings.js to track specific effects
+8. Add contentment messages to randomevents.js when contentment reaches certain thresholds (75, 50, 25, 0)
 ```
 
 ### 3. Implement Party Member Specialization System
