@@ -8,6 +8,8 @@ import { updateGameState } from './game.js';
 
 let isPaused = false;
 let tickInterval = null;
+// Add a separate flag for UI interactions
+export let isUIInteractionPaused = false;
 
 /**
  * Starts the game time and initializes the tick interval.
@@ -15,13 +17,24 @@ let tickInterval = null;
 export function startTime() {
   updateTimeDisplay();
   tickInterval = setInterval(tick, TICK_INTERVAL);
+  // Store the interval in window for global access
+  window.gameTickInterval = tickInterval;
+}
+
+/**
+ * Explicitly pause the game for UI interactions
+ * @param {boolean} pause - Whether to pause or resume
+ */
+export function pauseForUIInteraction(pause) {
+  isUIInteractionPaused = pause;
+  console.log(`Game ${pause ? 'paused' : 'resumed'} for UI interaction`);
 }
 
 /**
  * Progresses game time by one hour and updates the game state.
  */
 function tick() {
-  if (isPaused) return;
+  if (isPaused || isUIInteractionPaused) return;
 
   gameState.hour = (gameState.hour % 24) + 1;
   if (gameState.hour === 1) {

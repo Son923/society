@@ -3,6 +3,7 @@ import { updateGameState } from './game.js';
 import { addLogEntry } from './log.js';
 import { checkUpgradeAvailability } from './upgrades.js';
 import { getContentmentEffects } from './contentment.js';
+import { getSpecializationBonus } from './specializations.js';
 
 /**
  * Selects the best available party member for an action.
@@ -42,11 +43,14 @@ function performResourceAction(resourceType, minAmount, maxAmount) {
   const contentmentEffects = getContentmentEffects();
   const contentmentModifier = 1 + (contentmentEffects.resourceEfficiency || 0);
 
+  // Apply specialization bonus if the member is a gatherer
+  const specializationModifier = getSpecializationBonus(selected.member.specialization, resourceType);
+
   // Calculate base amount
   let amountGathered = Math.floor(Math.random() * (maxAmount - minAmount + 1)) + minAmount;
 
-  // Apply contentment modifier
-  amountGathered = Math.max(1, Math.floor(amountGathered * contentmentModifier));
+  // Apply contentment and specialization modifiers
+  amountGathered = Math.max(1, Math.floor(amountGathered * contentmentModifier * specializationModifier));
 
   gameState[resourceType] += amountGathered;
   gameState.totalResourcesGathered[resourceType] += amountGathered;

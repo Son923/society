@@ -186,6 +186,13 @@ export const UPGRADES = {
     cost: { wood: 400, food: 100 },
     effect: 'Automatically gathers small amounts of wood over time',
     prerequisite: 'lumberMill'
+  },
+  specializations: {
+    id: 'specializations',
+    name: 'Specialization Training',
+    cost: { food: 250, wood: 150, knowledgePoints: 5 },
+    effect: 'Allows party members to specialize in different roles for unique bonuses',
+    available: true
   }
 };
 

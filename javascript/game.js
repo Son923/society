@@ -24,6 +24,7 @@ import { checkTutorials, initializeTutorials, saveTutorialState } from './tutori
 import { runAutomations } from './automation.js';
 import { applyMedicalTentEffects } from './medicaltent.js';
 import { initializeContentment, checkContentmentEffects, updateContentmentDisplay, getContentmentEffects } from './contentment.js';
+import { getKnowledgeGeneration } from './specializations.js';
 
 // Debug mode flag
 let isDebugMode = false;
@@ -38,6 +39,7 @@ function enableDebugMode() {
   gameState.food = 1000;
   gameState.water = 1000;
   gameState.wood = 1000;
+  gameState.knowledgePoints = 1000;
 
   for (const upgradeId in UPGRADES) {
     gameState.upgrades[upgradeId] = true;
@@ -59,6 +61,18 @@ window.enableDebugMode = enableDebugMode;
  */
 export function initializeGame() {
   console.log('Initializing game...');
+
+  // Add global click listener to resume game ticks when clicking outside dropdown
+  document.addEventListener('click', (event) => {
+    // If we're clicking anywhere that's not a select element or its option
+    if (!event.target.closest('select')) {
+      // Import the function dynamically to avoid circular dependencies
+      import('./time.js').then(timeModule => {
+        timeModule.pauseForUIInteraction(false);
+      });
+    }
+  });
+
   setupDifficultySelection();
   setupGameControls();
   setupPartyActions();
@@ -202,6 +216,9 @@ export function updateGameState() {
   applyMedicalTentEffects();
   updateFarmingUI();
 
+  // Generate knowledge points from researchers
+  generateKnowledgeFromResearchers();
+
   // Check contentment effects once per day
   if (previousState.day !== gameState.day) {
     checkContentmentEffects();
@@ -209,6 +226,37 @@ export function updateGameState() {
 
   // Always update the contentment display
   updateContentmentDisplay();
+}
+
+/**
+ * Generates knowledge points from party members with the researcher specialization.
+ */
+function generateKnowledgeFromResearchers() {
+  if (!gameState.party) return;
+
+  let knowledgeGenerated = 0;
+  const currentTime = gameState.hour + (gameState.day - 1) * 24;
+
+  gameState.party.forEach((member, index) => {
+    if (member.isDead) return;
+
+    // Skip if the member is busy or resting
+    const isBusy = gameState.busyUntil[index] > currentTime;
+    const isResting = gameState.busyUntil[index] === -1;
+    if (isBusy || isResting) return;
+
+    // Get knowledge generation from researcher specialization
+    const hourlyKnowledge = getKnowledgeGeneration(member);
+    if (hourlyKnowledge > 0) {
+      knowledgeGenerated += hourlyKnowledge;
+    }
+  });
+
+  if (knowledgeGenerated > 0) {
+    gameState.knowledgePoints += knowledgeGenerated;
+    gameState.totalKnowledgePointsGained += knowledgeGenerated;
+    updateResourceDisplay();
+  }
 }
 
 /**

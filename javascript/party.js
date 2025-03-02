@@ -9,6 +9,8 @@ import { gameState } from './settings.js';
 import { gameOver, updateGameState } from './game.js';
 import { addLogEntry } from './log.js';
 import { getContentmentEffects } from './contentment.js';
+import { specializationTypes, applySpecializationEffects } from './specializations.js';
+import { pauseForUIInteraction } from './time.js';
 
 // Move this outside the class to be accessible by all instances
 const usedNames = new Set();
@@ -26,6 +28,7 @@ export class PartyMember {
     this.hunger = 100;
     this.thirst = 100;
     this.energy = 100;
+    this.specialization = null;
     this.traits = {
       hungerRate: Math.random() * 0.5 + 0.5,
       thirstRate: Math.random() * 0.75 + 0.75,
@@ -37,6 +40,19 @@ export class PartyMember {
 
   generateName() {
     return getUniqueRandomName(usedNames);
+  }
+
+  /**
+   * Sets the specialization for this party member.
+   * @param {string} specializationType - The type of specialization to set.
+   */
+  setSpecialization(specializationType) {
+    if (specializationTypes[specializationType]) {
+      this.specialization = specializationType;
+      addLogEntry(`${this.name} is now a ${specializationTypes[specializationType].name}.`, 'success');
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -84,6 +100,9 @@ export class PartyMember {
     if (this.hunger > 50 && this.thirst > 50 && this.energy > 50 && this.health < 100) {
       this.health = Math.min(100, this.health + 0.1);
     }
+
+    // Apply specialization effects
+    applySpecializationEffects(this);
   }
 
   applyActionEffects(effects) {
@@ -138,6 +157,17 @@ export function initializeParty() {
     const usedNames = new Set();
     gameState.party = Array.from({ length: 3 }, () => new PartyMember(getUniqueRandomName(usedNames)));
     gameState.busyUntil = Array(3).fill(0);
+  }
+
+  // Add document mousedown listener to detect clicks outside dropdown
+  // Only add this once during initialization
+  if (!window.dropdownListenerAdded) {
+    document.addEventListener('mousedown', (event) => {
+      if (!event.target.closest('.specialization-dropdown')) {
+        window.isSpecDropdownOpen = false;
+      }
+    });
+    window.dropdownListenerAdded = true;
   }
 }
 
@@ -198,6 +228,9 @@ export function updatePartyDisplay() {
   const partyContainer = document.getElementById('party-display');
   partyContainer.innerHTML = '';
 
+  // Add a flag to track if a dropdown is open
+  window.isSpecDropdownOpen = false;
+
   gameState.party.forEach((person, index) => {
     const personElement = document.createElement('div');
     personElement.className = 'person';
@@ -206,11 +239,36 @@ export function updatePartyDisplay() {
     const isResting = gameState.busyUntil[index] === -1;
     const busyTimeLeft = isBusy ? gameState.busyUntil[index] - currentTime : 0;
 
+    // Get specialization info if the person has one
+    const specializationInfo = person.specialization ?
+      specializationTypes[person.specialization] : null;
+
+    // Check if specializations upgrade has been purchased
+    const hasSpecializationsUpgrade = gameState.upgrades.specializations;
+
     personElement.innerHTML = `
       <div class="person-header">
         <h3><i data-lucide="person-standing" class="icon-gutter-grey"></i> ${person.name}</h3>
         <div class="busy-label ${person.isDead ? 'dead' : (isBusy ? 'busy' : (isResting ? 'resting' : 'idle'))}">${person.isDead ? 'DEAD' : (isBusy ? `BUSY [${busyTimeLeft}h]` : (isResting ? 'RESTING' : 'IDLE'))}</div>
       </div>
+      ${hasSpecializationsUpgrade ? `
+      <div class="specialization">
+        <div class="specialization-select">
+          <div class="specialization-left">
+            <i data-lucide="${specializationInfo ? specializationTypes[person.specialization].icon : 'briefcase'}" class="icon specialization-icon"></i>
+            <select data-person="${index}" class="specialization-dropdown" ${person.isDead || isBusy || isResting ? 'disabled' : ''}>
+              <option value="">Select Specialization</option>
+              ${Object.values(specializationTypes).map(spec => `
+                <option value="${spec.id}" ${person.specialization === spec.id ? 'selected' : ''}>${spec.name}</option>
+              `).join('')}
+            </select>
+          </div>
+          <div class="specialization-description">
+            ${specializationInfo ? specializationInfo.description : 'Choose a role for this party member'}
+          </div>
+        </div>
+      </div>
+      ` : ''}
       <div class="stats-container">
         <table class="stats">
           ${['health', 'hunger', 'thirst', 'energy'].map(stat => `
@@ -238,11 +296,78 @@ export function updatePartyDisplay() {
       </div>
     `;
     partyContainer.appendChild(personElement);
+
+    // Add event listeners for specialization dropdown
+    if (hasSpecializationsUpgrade && !person.isDead && !isBusy && !isResting) {
+      const specDropdown = personElement.querySelector('.specialization-dropdown');
+      if (specDropdown) {
+        // Pause game ticks when dropdown is focused
+        specDropdown.addEventListener('mousedown', (event) => {
+          window.isSpecDropdownOpen = true;
+          pauseForUIInteraction(true);
+        });
+
+        specDropdown.addEventListener('focus', (event) => {
+          window.isSpecDropdownOpen = true;
+          pauseForUIInteraction(true);
+        });
+
+        // Resume game ticks when dropdown loses focus
+        specDropdown.addEventListener('blur', (event) => {
+          // Small delay to allow for selection to complete
+          setTimeout(() => {
+            if (!window.isSpecDropdownOpen) {
+              pauseForUIInteraction(false);
+            }
+          }, 100);
+        });
+
+        specDropdown.addEventListener('change', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          const specType = event.target.value;
+          const personIndex = parseInt(event.target.getAttribute('data-person'));
+          if (specType !== undefined) {
+            setPartyMemberSpecialization(personIndex, specType);
+          }
+          // Resume game ticks after selection is made
+          window.isSpecDropdownOpen = false;
+          pauseForUIInteraction(false);
+        });
+      }
+    }
   });
+
+  // Remove the document mousedown listener from here since we added it in initializeParty
 
   // Refresh Lucide icons
   if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
     lucide.createIcons();
+  }
+}
+
+/**
+ * Sets the specialization for a party member.
+ * @param {number} personIndex - The index of the party member.
+ * @param {string} specializationType - The type of specialization to set.
+ */
+export function setPartyMemberSpecialization(personIndex, specializationType) {
+  const person = gameState.party[personIndex];
+  if (!person || person.isDead) return;
+
+  // If specializationType is empty, clear the specialization
+  if (!specializationType) {
+    person.specialization = null;
+    addLogEntry(`${person.name} no longer has a specialization.`, 'info');
+    updatePartyDisplay();
+    updateGameState();
+    return;
+  }
+
+  // Otherwise set the specialization
+  if (person.setSpecialization(specializationType)) {
+    updatePartyDisplay();
+    updateGameState();
   }
 }
 

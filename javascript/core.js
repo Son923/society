@@ -8,6 +8,7 @@ import { createLucideIcons } from './utils.js';
 import { initializeGame } from './game.js';
 import { initializeShortcuts } from './shortcuts.js';
 import { initializeShortcutsModal } from './shortcuts-modal.js';
+import './specializations.js'; // Import specializations module
 
 /**
  * Event listener for DOMContentLoaded event.

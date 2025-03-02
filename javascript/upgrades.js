@@ -10,6 +10,7 @@ import { initializeWell } from './well.js';
 import { initializeLumberMill } from './lumbermill.js';
 import { initializeWatchtower } from './watchtower.js';
 import { applyAdvancedFarmingEffects } from './farming.js';
+import { getWoodCostReduction } from './specializations.js';
 
 /**
  * Buys an upgrade if the player can afford it.
@@ -19,8 +20,21 @@ export function buyUpgrade(upgradeId) {
   const upgrade = UPGRADES[upgradeId];
   if (!upgrade || gameState.upgrades[upgradeId]) return;
 
-  let canAfford = true;
+  // Calculate costs with builder discount applied to wood
+  const adjustedCosts = {};
   for (const [resource, amount] of Object.entries(upgrade.cost)) {
+    if (resource === 'wood') {
+      // Find the best builder in the party
+      const bestBuilder = findBestBuilder();
+      const woodCostReduction = bestBuilder ? getWoodCostReduction(bestBuilder) : 1;
+      adjustedCosts[resource] = Math.floor(amount * woodCostReduction);
+    } else {
+      adjustedCosts[resource] = amount;
+    }
+  }
+
+  let canAfford = true;
+  for (const [resource, amount] of Object.entries(adjustedCosts)) {
     if (gameState[resource] < amount) {
       canAfford = false;
       break;
@@ -28,11 +42,18 @@ export function buyUpgrade(upgradeId) {
   }
 
   if (canAfford) {
-    for (const [resource, amount] of Object.entries(upgrade.cost)) {
+    for (const [resource, amount] of Object.entries(adjustedCosts)) {
       gameState[resource] -= amount;
     }
     gameState.upgrades[upgradeId] = true;
-    addLogEntry(`Unlocked upgrade: ${upgrade.name}`, 'success');
+
+    // Log the upgrade purchase with discount information if applicable
+    if (adjustedCosts.wood !== upgrade.cost.wood) {
+      addLogEntry(`Unlocked upgrade: ${upgrade.name} (Builder discount applied: ${upgrade.cost.wood - adjustedCosts.wood} wood saved)`, 'success');
+    } else {
+      addLogEntry(`Unlocked upgrade: ${upgrade.name}`, 'success');
+    }
+
     applyUpgradeEffects(upgradeId);
     checkPrerequisites(upgradeId);
     updateGameState();
@@ -41,6 +62,21 @@ export function buyUpgrade(upgradeId) {
   } else {
     addLogEntry(`Cannot afford upgrade: ${upgrade.name}`, 'error');
   }
+}
+
+/**
+ * Finds the party member with the builder specialization who provides the best wood cost reduction.
+ * @returns {Object|null} The best builder party member, or null if none found.
+ */
+function findBestBuilder() {
+  if (!gameState.party) return null;
+
+  return gameState.party.reduce((bestBuilder, member) => {
+    if (member.specialization === 'builder' && !member.isDead) {
+      if (!bestBuilder) return member;
+    }
+    return bestBuilder;
+  }, null);
 }
 
 /**
@@ -99,6 +135,9 @@ export function applyUpgradeEffects(upgradeId) {
     case 'woodGatheringDrone':
       initializeWoodGatheringDrone();
       break;
+    case 'specializations':
+      initializeSpecializations();
+      break;
     default:
       console.warn(`No effects implemented for upgrade: ${upgradeId}`);
   }
@@ -152,8 +191,33 @@ export function updateUpgradesUI() {
       upgradeButton.className = 'upgrade-button';
       upgradeButton.dataset.upgradeId = upgradeId;
 
-      let canAfford = true;
+      // Calculate costs with builder discount applied to wood
+      const adjustedCosts = {};
+      let builderDiscountApplied = false;
+      let originalWoodCost = 0;
+      let discountedWoodCost = 0;
+
       for (const [resource, amount] of Object.entries(upgrade.cost)) {
+        if (resource === 'wood') {
+          // Find the best builder in the party
+          const bestBuilder = findBestBuilder();
+          const woodCostReduction = bestBuilder ? getWoodCostReduction(bestBuilder) : 1;
+
+          if (woodCostReduction < 1) {
+            builderDiscountApplied = true;
+            originalWoodCost = amount;
+            discountedWoodCost = Math.floor(amount * woodCostReduction);
+            adjustedCosts[resource] = discountedWoodCost;
+          } else {
+            adjustedCosts[resource] = amount;
+          }
+        } else {
+          adjustedCosts[resource] = amount;
+        }
+      }
+
+      let canAfford = true;
+      for (const [resource, amount] of Object.entries(adjustedCosts)) {
         if (gameState[resource] < amount) {
           canAfford = false;
           break;
@@ -172,12 +236,26 @@ export function updateUpgradesUI() {
         <div class="upgrade-name">
           <span class="name">${upgrade.name}</span>
           <span class="cost">
-            ${Object.entries(upgrade.cost).map(([resource, amount]) => `
-              ${amount} <i data-lucide="${getResourceIcon(resource)}" class="icon ${getResourceColor(resource)}"></i>
-            `).join('')}
+            ${Object.entries(upgrade.cost).map(([resource, amount]) => {
+        if (resource === 'wood' && builderDiscountApplied) {
+          return `
+                  <span class="discounted-cost">
+                    <span class="original-cost">${originalWoodCost}</span>
+                    <span class="discount-arrow">→</span>
+                    ${discountedWoodCost}
+                  </span>
+                  <i data-lucide="${getResourceIcon(resource)}" class="icon ${getResourceColor(resource)}"></i>
+                `;
+        } else {
+          return `
+                  ${amount} <i data-lucide="${getResourceIcon(resource)}" class="icon ${getResourceColor(resource)}"></i>
+                `;
+        }
+      }).join('')}
           </span>
         </div>
         <div class="upgrade-effect">${upgrade.effect}</div>
+        ${builderDiscountApplied ? `<div class="builder-discount">Builder discount applied: ${Math.round((1 - discountedWoodCost / originalWoodCost) * 100)}%</div>` : ''}
       `;
 
       if (!gameState.upgrades[upgradeId]) {
@@ -188,7 +266,10 @@ export function updateUpgradesUI() {
     }
   }
 
-  createLucideIcons();
+  // Refresh Lucide icons
+  if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+    lucide.createIcons();
+  }
 }
 
 /**
@@ -201,6 +282,7 @@ function getResourceIcon(resource) {
     case 'food': return 'beef';
     case 'water': return 'droplet';
     case 'wood': return 'tree-pine';
+    case 'knowledgePoints': return 'book';
     default: return 'circle';
   }
 }
@@ -215,6 +297,7 @@ function getResourceColor(resource) {
     case 'food': return 'dark-yellow';
     case 'water': return 'blue';
     case 'wood': return 'green';
+    case 'knowledgePoints': return 'magenta';
     default: return '';
   }
 }
@@ -293,4 +376,15 @@ function applyWaterPurificationEffects() {
 function applyToolWorkshopEffects() {
   gameState.resourceEfficiency = 1.25; // 25% increase in resource gathering efficiency
   addLogEntry('Tool Workshop built. Resource gathering efficiency increased by 25%!', 'success');
+}
+
+/**
+ * Initializes the specialization system after the upgrade is purchased.
+ */
+function initializeSpecializations() {
+  addLogEntry('Specialization Training complete! Party members can now specialize in different roles.', 'success');
+  // Force update of party display to show specialization options
+  import('./party.js').then(partyModule => {
+    partyModule.updatePartyDisplay();
+  });
 }
