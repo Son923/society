@@ -106,7 +106,7 @@ export function setPlantingCrop(cropType) {
 /**
  * Updates the farming UI.
  */
-function updateFarmingUI() {
+export function updateFarmingUI() {
   const farmingModule = document.getElementById('farming-module');
   if (!farmingModule) return;
 

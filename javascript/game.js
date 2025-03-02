@@ -13,7 +13,7 @@ import { initializeParty, updatePartyStats, updatePartyDisplay, performAction, P
 import { setupActionListeners, updateActionButtonsState } from './actions.js';
 import { initializeUpgrades, checkUpgradeAvailability, updateUpgradesUI, applyUpgradeEffects } from './upgrades.js';
 import { unlockSecondaryModule } from './upgrades.js';
-import { initializeFarming } from './farming.js';
+import { initializeFarming, updateFarmingUI } from './farming.js';
 import { initializeWell, generateWellWater } from './well.js';
 import { initializeHunting } from './hunting.js';
 import { initializeLumberMill, updateLumberMill } from './lumbermill.js';
@@ -198,6 +198,7 @@ export function updateGameState() {
   checkRescueMission();
   checkForRandomEvent();
   applyMedicalTentEffects();
+  updateFarmingUI();
 }
 
 /**
