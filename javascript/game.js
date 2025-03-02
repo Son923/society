@@ -325,6 +325,7 @@ function showGameOverScreen() {
             <div class="resource"><i data-lucide="beef" class="icon dark-yellow"></i><span>${Math.floor(gameState.totalResourcesGathered.food)}</span></div>
             <div class="resource"><i data-lucide="droplet" class="icon blue"></i><span>${Math.floor(gameState.totalResourcesGathered.water)}</span></div>
             <div class="resource"><i data-lucide="tree-pine" class="icon green"></i><span>${Math.floor(gameState.totalResourcesGathered.wood)}</span></div>
+            <div class="resource"><i data-lucide="book" class="icon magenta"></i><span>${Math.floor(gameState.totalKnowledgePointsGained)}</span></div>
           </div>
         </div>
         <div class="achievements">
