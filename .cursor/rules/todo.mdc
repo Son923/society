@@ -5,7 +5,7 @@ alwaysApply: false
 ---
 # Implementation Todo List for Society Fail
 
-### 1. Add Knowledge Points Resource
+### 1. Add Knowledge Points Resource ✅
 ```
 Add a new resource called "knowledge points" to the game by:
 1. Modify settings.js: Add knowledgePoints: 0 to initialGameState object
@@ -16,6 +16,7 @@ Add a new resource called "knowledge points" to the game by:
 6. Update resource actions to include: gameState.knowledgePoints += 1; gameState.totalKnowledgePointsGained += 1;
 7. Add notification in log.js when knowledge points are gained
 ```
+
 
 ### 2. Implement Corruption Meter System
 ```
