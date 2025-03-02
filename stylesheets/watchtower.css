@@ -1,7 +1,7 @@
 #watchtower-module {
   .countdown {
     font-size: 1.7em;
-    font-weight: 900;
+    font-weight: 700;
     text-align: center;
   }
 
@@ -38,7 +38,7 @@
     }
 
     div {
-      font-weight: 900;
+      font-weight: 700;
       text-transform: uppercase;
     }
 

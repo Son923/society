@@ -7,6 +7,8 @@
   align-items: center;
   justify-content: center;
   text-transform: uppercase;
+  font-size: 0.65rem !important;
+  font-weight: 600 !important;
 }
 
 /* Difficulty selection shortcuts */
@@ -44,4 +46,4 @@
 /* Hide shortcuts when toggled off */
 body.hide-shortcuts .shortcut {
   display: none !important;
-} 
+}
