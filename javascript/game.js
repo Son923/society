@@ -229,7 +229,7 @@ function reconstructPartyMembers() {
  */
 function updateResourceDisplay() {
   const resourceElements = document.querySelectorAll('.resources .resource span');
-  ['food', 'water', 'wood'].forEach((resource, index) => {
+  ['food', 'water', 'wood', 'knowledgePoints'].forEach((resource, index) => {
     resourceElements[index].textContent = gameState[resource];
   });
 }

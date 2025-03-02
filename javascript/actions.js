@@ -42,6 +42,13 @@ function performResourceAction(resourceType, minAmount, maxAmount) {
   gameState.totalResourcesGathered[resourceType] += amountGathered;
   gameState.totalActions++;
 
+  // 5% chance to gain 1 knowledge point
+  if (Math.random() < 0.05) {
+    gameState.knowledgePoints += 1;
+    gameState.totalKnowledgePointsGained += 1;
+    addLogEntry(`${selected.member.name} discovered 1 knowledge point while gathering.`, 'success');
+  }
+
   // Apply effects on hunger, thirst, and energy
   const effects = getResourceActionEffects(resourceType);
   selected.member.applyActionEffects(effects);

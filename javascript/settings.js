@@ -29,6 +29,7 @@ export const initialGameState = {
   food: 0,
   water: 0,
   wood: 0,
+  knowledgePoints: 0,
   party: [],
   upgrades: {},
   lumberMill: {
@@ -46,6 +47,7 @@ export const initialGameState = {
   totalCropsHarvested: 0,
   totalAnimalsHunted: 0,
   totalWellWaterCollected: 0,
+  totalKnowledgePointsGained: 0,
   watchtower: {
     lastRescueMissionDay: 0,
     rescueMissionAvailable: true,
