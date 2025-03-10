@@ -25,6 +25,7 @@ import { runAutomations } from './automation.js';
 import { applyMedicalTentEffects } from './medicaltent.js';
 import { initializeContentment, checkContentmentEffects, updateContentmentDisplay, getContentmentEffects } from './contentment.js';
 import { getKnowledgeGeneration } from './specializations.js';
+import { initializeTechnologies, updateResearchProgress, showTechnologyModule, updateTechnologiesUI } from './technologies.js';
 
 // Debug mode flag
 let isDebugMode = false;
@@ -89,7 +90,16 @@ export function initializeGame() {
     updateTimeDisplay();
     updateLogUI();
     initializeUpgrades();
+    initializeTechnologies();
     startTime();
+
+    // Check if there's a pending research to complete after loading
+    if (gameState.completePendingResearch) {
+      import('./technologies.js').then(techModule => {
+        techModule.completeResearch(gameState.completePendingResearch);
+        delete gameState.completePendingResearch;
+      });
+    }
   }
 
   updateStartScreenResources();
@@ -198,64 +208,118 @@ function resetGame() {
  * Updates the game state, including party stats and resource display.
  */
 export function updateGameState() {
-  const previousState = { ...gameState };
-  updatePartyStats();
-  updateLumberMill();
-  updateResourceDisplay();
-  updateWatchtowerUI();
-  updateActionButtonsState();
-  checkUpgradeAvailability();
-  generateWellWater();
-  checkTutorials();
-  saveTutorialState();
-  runAutomations();
-  saveGameState();
-  checkAchievements();
-  checkRescueMission();
-  checkForRandomEvent();
-  applyMedicalTentEffects();
-  updateFarmingUI();
-
-  // Generate knowledge points from researchers
-  generateKnowledgeFromResearchers();
-
-  // Check contentment effects once per day
-  if (previousState.day !== gameState.day) {
-    checkContentmentEffects();
+  // Check if the game is over
+  if (checkPartyStatus()) {
+    gameOver();
+    return;
   }
 
-  // Always update the contentment display
+  // Update party stats
+  updatePartyStats();
+  updatePartyDisplay();
+
+  // Update resource display
+  updateResourceDisplay();
+
+  // Check for random events
+  checkForRandomEvent();
+
+  // Check for achievements
+  checkAchievements();
+  updateAchievementsUI();
+
+  // Check for tutorials
+  checkTutorials();
+
+  // Check for rescue missions
+  checkRescueMission();
+  updateWatchtowerUI();
+
+  // Update farming
+  if (gameState.upgrades.farming) {
+    updateFarmingUI();
+  }
+
+  // Generate well water
+  if (gameState.upgrades.well) {
+    generateWellWater();
+  }
+
+  // Update lumber mill
+  if (gameState.upgrades.lumberMill) {
+    updateLumberMill();
+  }
+
+  // Apply medical tent effects
+  if (gameState.upgrades.medicalTent) {
+    applyMedicalTentEffects();
+  }
+
+  // Run automations
+  runAutomations();
+
+  // Generate knowledge from researchers
+  generateKnowledgeFromResearchers();
+
+  // Check contentment effects
+  checkContentmentEffects();
   updateContentmentDisplay();
+
+  // Update research progress
+  updateResearchProgress();
+
+  // Update technologies UI if there's active research
+  if (gameState.activeResearch) {
+    updateTechnologiesUI();
+  }
+
+  // Check if technology module should be shown
+  checkTechnologyModuleAvailability();
+
+  // Update action buttons state
+  updateActionButtonsState();
+
+  // Save game state
+  saveGameState();
 }
 
 /**
- * Generates knowledge points from party members with the researcher specialization.
+ * Generates knowledge points from party members with researcher specialization
  */
 function generateKnowledgeFromResearchers() {
   if (!gameState.party) return;
 
-  let knowledgeGenerated = 0;
-  const currentTime = gameState.hour + (gameState.day - 1) * 24;
+  let totalKnowledgeGeneration = 0;
 
-  gameState.party.forEach((member, index) => {
-    if (member.isDead) return;
-
-    // Skip if the member is busy or resting
-    const isBusy = gameState.busyUntil[index] > currentTime;
-    const isResting = gameState.busyUntil[index] === -1;
-    if (isBusy || isResting) return;
-
-    // Get knowledge generation from researcher specialization
-    const hourlyKnowledge = getKnowledgeGeneration(member);
-    if (hourlyKnowledge > 0) {
-      knowledgeGenerated += hourlyKnowledge;
+  gameState.party.forEach(member => {
+    if (member.specialization === 'researcher' && !member.isDead) {
+      const knowledgeGeneration = getKnowledgeGeneration(member);
+      totalKnowledgeGeneration += knowledgeGeneration;
     }
   });
 
-  if (knowledgeGenerated > 0) {
-    gameState.knowledgePoints += knowledgeGenerated;
-    gameState.totalKnowledgePointsGained += knowledgeGenerated;
-    updateResourceDisplay();
+  if (totalKnowledgeGeneration > 0) {
+    gameState.knowledgePoints += totalKnowledgeGeneration;
+    gameState.totalKnowledgePointsGained += totalKnowledgeGeneration;
+  }
+}
+
+/**
+ * Checks if the technology module should be shown based on game progress
+ */
+function checkTechnologyModuleAvailability() {
+  // Show technology module after day 10 or when player has at least 5 knowledge points
+  const shouldShowTechModule = gameState.day >= 10 || gameState.knowledgePoints >= 5;
+
+  // Check if technology module exists in the DOM
+  const techModule = document.getElementById('technology-module');
+
+  if (shouldShowTechModule && techModule) {
+    // If the module is still a mystery, show it
+    if (techModule.classList.contains('mystery')) {
+      showTechnologyModule(true);
+      addLogEntry('You have gained enough knowledge to unlock the Technology research system!', 'success');
+    }
   }
 }
 
@@ -439,33 +503,55 @@ function resetPauseButton() {
   createLucideIcons();
 }
 
+/**
+ * Initializes all unlocked modules based on the game state
+ */
 function initializeUnlockedModules() {
-  if (gameState.upgrades) {
-    for (const [upgradeId, isUnlocked] of Object.entries(gameState.upgrades)) {
-      if (isUnlocked) {
-        switch (upgradeId) {
-          case 'farming':
-            unlockSecondaryModule('farming-module');
-            initializeFarming();
-            break;
-          case 'well':
-            unlockSecondaryModule('well-module');
-            initializeWell();
-            break;
-          case 'huntingLodge':
-            unlockSecondaryModule('hunting-module');
-            initializeHunting();
-            break;
-          case 'lumberMill':
-            unlockSecondaryModule('lumber-mill-module');
-            initializeLumberMill();
-            break;
-          case 'watchtower':
-            unlockSecondaryModule('watchtower-module');
-            initializeWatchtower();
-            break;
-        }
+  if (gameState.upgrades.farming) {
+    unlockSecondaryModule('farming-module');
+    initializeFarming();
+  }
+
+  if (gameState.upgrades.well) {
+    unlockSecondaryModule('well-module');
+    initializeWell();
+  }
+
+  if (gameState.upgrades.huntingLodge) {
+    unlockSecondaryModule('hunting-module');
+    initializeHunting();
+  }
+
+  if (gameState.upgrades.lumberMill) {
+    unlockSecondaryModule('lumber-mill-module');
+    initializeLumberMill();
+  }
+
+  if (gameState.upgrades.watchtower) {
+    unlockSecondaryModule('watchtower-module');
+    initializeWatchtower();
+  }
+
+  // Initialize technology module if conditions are met
+  if (gameState.day >= 10 || gameState.knowledgePoints >= 5) {
+    // Add technology module to secondary modules if it doesn't exist
+    if (!document.getElementById('technology-module')) {
+      const secondaryModules = document.getElementById('secondary-modules');
+      if (secondaryModules) {
+        const techModule = document.createElement('section');
+        techModule.id = 'technology-module';
+        techModule.className = 'mystery';
+        techModule.innerHTML = `
+          <div class="icon"><i data-lucide="circle-help" class="icon gutter-grey"></i></div>
+          <div class="title">Ancient Knowledge</div>
+          <div class="description">What secrets await those who seek to understand?</div>
+        `;
+        secondaryModules.appendChild(techModule);
+        createLucideIcons();
       }
     }
+
+    showTechnologyModule(true);
+    initializeTechnologies();
   }
 }

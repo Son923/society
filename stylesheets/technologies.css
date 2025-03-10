@@ -1,0 +1,337 @@
+/**
+ * Technology Module Styles
+ * Styling for the technology research tree system
+ */
+
+#technology-module {
+
+  /* Module container styling */
+  h2 {
+    background-color: white;
+    color: black;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 0.2em 0.5em;
+    font-size: 0.8em;
+    border-bottom: var(--border-thickness) solid var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+
+    .lucide {
+      width: 1.2em;
+      height: 1.2em;
+    }
+  }
+
+  /* Active research section */
+  .active-research {
+    border-bottom: var(--border-thickness) solid var(--text-color);
+    padding: 0.8em;
+
+    h3 {
+      text-transform: uppercase;
+      font-weight: 700;
+      font-size: 0.9em;
+      margin-bottom: 0.5em;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+
+      .lucide {
+        width: 1em;
+        height: 1em;
+        color: var(--magenta);
+      }
+    }
+
+    .research-details {
+      font-size: 0.8em;
+      margin-bottom: 0.5em;
+    }
+
+    .progress-bar {
+      height: 0.5rem;
+      background-color: var(--background-color-alt);
+      border: none;
+      margin-bottom: 0.3em;
+
+      .progress {
+        height: 100%;
+        background-color: var(--magenta);
+      }
+    }
+
+    .progress-text {
+      font-size: 0.7em;
+      color: var(--text-color-alt);
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
+  /* Technology category filters */
+  .tech-category-filters {
+    display: flex;
+    border-bottom: var(--border-thickness) solid var(--text-color);
+
+    button {
+      flex: 1;
+      background-color: transparent;
+      border: 0;
+      margin: 0;
+      padding: 0.5em;
+      color: var(--text-color);
+      font-size: 0.8em;
+      text-transform: uppercase;
+
+      &:not(:last-child) {
+        border-right: var(--border-thickness) solid var(--text-color);
+      }
+
+      &.active {
+        background-color: var(--magenta);
+        color: var(--background-color);
+      }
+
+      &:hover:not(.active) {
+        background-color: var(--background-color-alt);
+      }
+    }
+  }
+
+  /* Technologies container */
+  .technologies-container {
+    padding: 0.8em;
+
+    .tech-category {
+      margin-bottom: 1.5em;
+
+      h3 {
+        text-transform: uppercase;
+        font-weight: 700;
+        font-size: 0.8em;
+        margin-bottom: 0.8em;
+        padding-bottom: 0.2em;
+        border-bottom: var(--border-thickness) solid var(--text-color-alt);
+      }
+    }
+  }
+
+  /* Technology items grid */
+  .tech-items {
+    display: grid;
+    gap: 0.8em;
+    grid-template-columns: 1fr;
+  }
+
+  /* Technology item */
+  .tech-item {
+    background-color: var(--background-color-alt);
+    border: var(--border-thickness) solid var(--text-color-alt);
+
+    &.available {
+      border-color: var(--text-color);
+    }
+
+    &.researched {
+      border-color: var(--green);
+    }
+
+    &.active {
+      border-color: var(--magenta);
+    }
+
+    &.locked {
+      opacity: 0.6;
+    }
+
+    .tech-header {
+      display: flex;
+      padding: 0.5em;
+      gap: 0.8em;
+      align-items: center;
+
+      .tech-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2em;
+        height: 2em;
+        flex-shrink: 0;
+
+        .lucide {
+          width: 1.5em;
+          height: 1.5em;
+          color: var(--text-color-alt);
+        }
+      }
+
+      .researched & .tech-icon .lucide {
+        color: var(--green);
+      }
+
+      .active & .tech-icon .lucide {
+        color: var(--magenta);
+      }
+
+      .tech-name {
+        flex-grow: 1;
+        font-weight: 700;
+        font-size: 0.9em;
+        text-transform: uppercase;
+      }
+
+      .tech-status {
+        font-size: 0.7em;
+        padding: 0.2em 0.4em;
+        border-radius: 0;
+        text-transform: uppercase;
+        font-weight: 700;
+
+        &.researched {
+          background-color: var(--green);
+          color: var(--background-color);
+        }
+
+        &.active {
+          background-color: var(--magenta);
+          color: var(--background-color);
+        }
+
+        &.available {
+          background-color: var(--text-color);
+          color: var(--background-color);
+        }
+
+        &.locked {
+          background-color: var(--text-color-alt);
+          color: var(--background-color);
+        }
+      }
+    }
+
+    .tech-content {
+      padding: 0.5em;
+      border-top: var(--border-thickness) solid var(--text-color-alt);
+
+      .tech-effect {
+        font-size: 0.8em;
+        margin-bottom: 0.5em;
+      }
+
+      .tech-cost {
+        display: flex;
+        gap: 1em;
+        margin-bottom: 0.5em;
+        font-size: 0.8em;
+
+        span {
+          display: flex;
+          align-items: center;
+          gap: 0.3em;
+
+          .lucide {
+            width: 1em;
+            height: 1em;
+          }
+        }
+
+        .knowledge {
+          color: var(--magenta);
+        }
+
+        .time {
+          color: var(--text-color-alt);
+        }
+      }
+
+      .tech-prerequisites {
+        font-size: 0.75em;
+        color: var(--text-color-alt);
+        font-style: italic;
+        margin-bottom: 0.5em;
+      }
+
+      .research-button {
+        background-color: var(--magenta);
+        color: var(--background-color);
+        border: none;
+        padding: 0.3em 0.6em;
+        font-size: 0.8em;
+        text-transform: uppercase;
+        font-weight: 700;
+        cursor: pointer;
+
+        &:hover {
+          background-color: var(--text-color);
+        }
+
+        &:disabled {
+          background-color: var(--text-color-alt);
+          cursor: not-allowed;
+          opacity: 0.7;
+        }
+      }
+
+      .tech-progress {
+        margin-top: 0.5em;
+
+        .progress-bar {
+          height: 0.4rem;
+          background-color: var(--background-color-alt);
+          border: none;
+          margin-bottom: 0.2em;
+
+          .progress {
+            height: 100%;
+            background-color: var(--magenta);
+          }
+        }
+
+        .progress-text {
+          font-size: 0.7em;
+          color: var(--text-color-alt);
+        }
+      }
+    }
+  }
+
+  /* Empty state */
+  .no-technologies {
+    padding: 1em;
+    text-align: center;
+    color: var(--text-color-alt);
+    font-size: 0.9em;
+    font-style: italic;
+  }
+
+  /* Responsive adjustments */
+  @media (min-width: 768px) {
+    .tech-items {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .tech-category-filters {
+      flex-wrap: wrap;
+
+      button {
+        flex: 1 0 33.333%;
+
+        &:not(:last-child) {
+          border-right: none;
+        }
+
+        &:nth-child(3n) {
+          border-right: none;
+        }
+
+        &:nth-child(n+4) {
+          border-top: var(--border-thickness) solid var(--text-color);
+        }
+      }
+    }
+  }
+}

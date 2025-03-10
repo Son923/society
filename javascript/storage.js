@@ -45,6 +45,28 @@ export function loadGameState() {
   // Ensure collapseState exists
   loadedState.collapseState = loadedState.collapseState || {};
 
+  // Ensure technologies and activeResearch exist
+  loadedState.technologies = loadedState.technologies || {};
+  loadedState.activeResearch = loadedState.activeResearch || null;
+
+  // Update research progress if there's active research
+  if (loadedState.activeResearch) {
+    const currentTime = loadedState.day * 24 + loadedState.hour;
+    const elapsedResearchTime = currentTime - loadedState.activeResearch.startTime;
+    const progress = Math.min(elapsedResearchTime / loadedState.activeResearch.totalTime, 1);
+
+    // Update progress in the technology
+    if (loadedState.technologies[loadedState.activeResearch.id]) {
+      loadedState.technologies[loadedState.activeResearch.id].progress = progress;
+    }
+
+    // If research is complete, mark it for completion after loading
+    if (progress >= 1) {
+      loadedState.completePendingResearch = loadedState.activeResearch.id;
+      loadedState.activeResearch = null;
+    }
+  }
+
   return loadedState;
 }
 

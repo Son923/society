@@ -48,22 +48,27 @@ export function plantCrop(row, col) {
   const cropType = gameState.farming.plantingCrop;
   const waterCost = CROP_TYPES[cropType].waterNeeded;
 
-  if (gameState.water >= waterCost) {
-    gameState.water -= waterCost;
-    const growthTime = gameState.farming.advancedFarming
-      ? Math.floor(CROP_TYPES[cropType].growthTime * 0.75)
-      : CROP_TYPES[cropType].growthTime;
-    gameState.farming.grid[row][col] = {
-      type: cropType,
-      plantedAt: gameState.hour + (gameState.day - 1) * 24,
-      growthTime: growthTime
-    };
-    addLogEntry(`Planted ${cropType} at row ${row + 1}, column ${col + 1}.`);
-    updateFarmingUI();
-    updateGameState();
-  } else {
-    addLogEntry("Not enough water to plant this crop!", 'error');
+  if (gameState.water < waterCost) {
+    addLogEntry(`Not enough water to plant ${cropType}. Need ${waterCost} water.`, 'error');
+    return;
   }
+
+  // Apply farming effects from upgrades and technologies
+  const farmingEffects = applyAdvancedFarmingEffects();
+  const baseGrowthTime = CROP_TYPES[cropType].growthTime;
+  const adjustedGrowthTime = Math.floor(baseGrowthTime * farmingEffects.growthTimeReduction);
+
+  gameState.water -= waterCost;
+  gameState.farming.grid[row][col] = {
+    type: cropType,
+    plantedAt: gameState.hour + (gameState.day - 1) * 24,
+    growthTime: adjustedGrowthTime,
+    growthProgress: 0
+  };
+
+  addLogEntry(`Planted ${cropType} (requires ${adjustedGrowthTime} hours to grow)`, 'success');
+  updateGameState();
+  updateFarmingUI();
 }
 
 /**
@@ -73,25 +78,28 @@ export function plantCrop(row, col) {
  */
 export function harvestCrop(row, col) {
   const plot = gameState.farming.grid[row][col];
-  if (!plot) {
-    addLogEntry("No crop to harvest here!", 'warning');
+  if (!plot || plot.growthProgress < 1) {
     return;
   }
 
-  const now = gameState.hour + (gameState.day - 1) * 24;
-  if (now - plot.plantedAt >= plot.growthTime) {
-    const cropYield = gameState.farming.advancedFarming
-      ? Math.floor(CROP_TYPES[plot.type].yield * 1.5)
-      : CROP_TYPES[plot.type].yield;
-    gameState.food += cropYield;
-    gameState.totalCropsHarvested = (gameState.totalCropsHarvested || 0) + 1;
-    gameState.farming.grid[row][col] = null;
-    addLogEntry(`Harvested ${plot.type} at row ${row + 1}, column ${col + 1}, yielding ${cropYield} food.`);
-    updateFarmingUI();
-    updateGameState();
-  } else {
-    addLogEntry("This crop is not ready for harvest yet!", 'warning');
-  }
+  const cropType = plot.type;
+  const baseYield = CROP_TYPES[cropType].yield;
+
+  // Apply farming effects from upgrades and technologies
+  const farmingEffects = applyAdvancedFarmingEffects();
+  const adjustedYield = Math.floor(baseYield * farmingEffects.yieldMultiplier);
+
+  // Add the harvested food to the game state
+  gameState.food += adjustedYield;
+  gameState.totalResourcesGathered.food += adjustedYield;
+  gameState.totalCropsHarvested += 1;
+
+  // Clear the plot
+  gameState.farming.grid[row][col] = null;
+
+  addLogEntry(`Harvested ${cropType}: +${adjustedYield} food`, 'success');
+  updateGameState();
+  updateFarmingUI();
 }
 
 /**
@@ -152,14 +160,33 @@ function createPlotElement(plot, row, col) {
   }
 
   const now = gameState.hour + (gameState.day - 1) * 24;
-  const growthTime = CROP_TYPES[plot.type].growthTime;
-  const growthProgress = (now - plot.plantedAt) / growthTime;
-  const isReady = growthProgress >= 1;
+  // Use the plot's growthTime which has already been adjusted for advanced farming effects
+  const growthProgress = (now - plot.plantedAt) / plot.growthTime;
+
+  // Store the growth progress in the plot object
+  plot.growthProgress = Math.min(growthProgress, 1);
+
+  const isReady = plot.growthProgress >= 1;
+  const progressPercent = Math.floor(plot.growthProgress * 100);
+
+  // Determine growth class based on progress
+  let growthClass = 'just-planted';
+  if (isReady) {
+    growthClass = 'ready-to-harvest';
+  } else if (progressPercent >= 75) {
+    growthClass = 'almost-ready';
+  } else if (progressPercent >= 50) {
+    growthClass = 'half-grown';
+  } else if (progressPercent >= 25) {
+    growthClass = 'quarter-grown';
+  }
 
   return `
-    <div class="plot-cell ${isReady ? 'ready-to-harvest' : ''}"
-         onclick="${isReady ? `window.harvestCrop(${row}, ${col})` : ''}">
+    <div class="plot-cell ${growthClass}"
+         onclick="${isReady ? `window.harvestCrop(${row}, ${col})` : ''}"
+         title="${plot.type}: ${progressPercent}% grown">
       <i data-lucide="${getCropIcon(plot.type)}" class="icon ${getCropColor(plot.type)}"></i>
+      ${!isReady ? `<div class="growth-progress">${progressPercent}%</div>` : ''}
     </div>
   `;
 }
@@ -193,25 +220,32 @@ function getCropColor(cropType) {
 }
 
 /**
- * Applies the effects of the Advanced Farming upgrade.
+ * Applies the effects of the Advanced Farming upgrade and technology.
+ * @returns {Object} The modified crop properties
  */
 export function applyAdvancedFarmingEffects() {
-  if (!gameState.farming.advancedFarming) {
-    gameState.farming.advancedFarming = true;
+  const hasAdvancedFarmingUpgrade = gameState.upgrades.advancedFarming;
+  const hasAdvancedFarmingTech = gameState.technologies?.advancedFarming?.researched;
 
-    // Increase crop yield by 50%
-    for (const cropType of Object.values(CROP_TYPES)) {
-      cropType.yield = Math.floor(cropType.yield * 1.5);
-    }
+  let yieldMultiplier = 1;
+  let growthTimeReduction = 1;
 
-    // Reduce growth time by 25%
-    for (const cropType of Object.values(CROP_TYPES)) {
-      cropType.growthTime = Math.floor(cropType.growthTime * 0.75);
-    }
-
-    addLogEntry('Advanced Farming Techniques applied: Crop yields increased and growth times reduced!', 'success');
-    updateFarmingUI();
+  // Apply upgrade effects
+  if (hasAdvancedFarmingUpgrade) {
+    yieldMultiplier *= 1.5; // 50% more yield
+    growthTimeReduction *= 0.75; // 25% less growth time
   }
+
+  // Apply technology effects
+  if (hasAdvancedFarmingTech) {
+    yieldMultiplier *= 1.5; // Additional 50% more yield
+    growthTimeReduction *= 0.75; // Additional 25% less growth time
+  }
+
+  return {
+    yieldMultiplier,
+    growthTimeReduction
+  };
 }
 
 // Expose functions to the global scope for onclick events

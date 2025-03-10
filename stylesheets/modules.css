@@ -74,29 +74,38 @@
 }
 
 .mystery {
-  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2em;
   border: var(--border-thickness) solid var(--text-color);
 }
 
-.mystery .lucide {
-  width: 4em;
-  height: 4em;
-}
+.mystery-content {
+  padding: 1.5em;
+  text-align: center;
 
-.mystery .title {
-  margin-top: 0.5em;
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 1.2em;
-}
+  .icon {
+    margin-bottom: 1em;
 
-.mystery .description {
-  font-size: 0.8em;
+    .lucide {
+      width: 3em;
+      height: 3em;
+    }
+  }
+
+  .title {
+    font-size: 1.2em;
+    font-weight: 700;
+    margin-bottom: 0.5em;
+    text-transform: uppercase;
+  }
+
+  .description {
+    font-size: 0.9em;
+    color: var(--text-color-alt);
+    font-style: italic;
+  }
 }
 
 @media (min-width: 100ch) {

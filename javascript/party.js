@@ -172,12 +172,24 @@ export function initializeParty() {
 }
 
 /**
- * Updates the stats of all party members.
+ * Updates the stats of all party members based on current conditions.
  */
 export function updatePartyStats() {
+  if (!gameState.party) return;
+
   const currentTime = gameState.hour + (gameState.day - 1) * 24;
+
+  // Check if it's a new day (hour 1)
+  const isNewDay = gameState.hour === 1;
+
   gameState.party.forEach((member, index) => {
     if (member.isDead) return;
+
+    // Apply medicinal herbs technology effect (5% health regeneration per day)
+    if (isNewDay && gameState.technologies?.medicinalHerbs?.researched) {
+      const healthRegen = Math.ceil(member.maxHealth * 0.05);
+      member.health = Math.min(member.maxHealth, member.health + healthRegen);
+    }
 
     const isResting = gameState.busyUntil[index] === -1;
     const isBusy = gameState.busyUntil[index] > currentTime;

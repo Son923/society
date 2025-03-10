@@ -11,6 +11,7 @@ import { initializeLumberMill } from './lumbermill.js';
 import { initializeWatchtower } from './watchtower.js';
 import { applyAdvancedFarmingEffects } from './farming.js';
 import { getWoodCostReduction } from './specializations.js';
+import { initializeMedicalTent } from './medicaltent.js';
 
 /**
  * Buys an upgrade if the player can afford it.

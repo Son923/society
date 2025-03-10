@@ -10,6 +10,8 @@
   --light-red: #e06c75;
   --dark-red: #be5046;
   --green: #98c379;
+  --green-rgb: 152, 195, 121;
+  /* RGB values for --green */
   --light-green: #b5e890;
   --light-yellow: #e5c07b;
   --dark-yellow: #d19a66;

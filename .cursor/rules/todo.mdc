@@ -46,21 +46,35 @@ Add role specializations for party members:
 8. Update updateGameState() to generate knowledge from researchers
 ```
 
-### 4. Create Technology Research Tree System
+### 4. Create Technology Research Tree System ✅
 ```
-Implement a knowledge-based technology tree:
+Implement a knowledge-based technology tree that extends beyond the existing Upgrades system:
 1. Create new file javascript/technologies.js with TECHNOLOGIES object containing:
-   - improvedTools: {id: "improvedTools", name: "Improved Tools", cost: 10, effect: "Increase resource gathering by 20%", prerequisites: [], unlocked: false, researched: false}
-   - advancedFarming: {id: "advancedFarming", name: "Advanced Farming", cost: 25, effect: "50% more food from crops", prerequisites: ["improvedTools"], unlocked: false, researched: false}
-   - waterPurification: {id: "waterPurification", name: "Water Purification", cost: 25, effect: "20% less water consumption", prerequisites: ["improvedTools"], unlocked: false, researched: false}
-   - betterConstruction: {id: "betterConstruction", name: "Better Construction", cost: 30, effect: "Buildings cost 25% less wood", prerequisites: ["improvedTools"], unlocked: false, researched: false}
-   - medicinalHerbs: {id: "medicinalHerbs", name: "Medicinal Herbs", cost: 40, effect: "Party members heal 5% health per day", prerequisites: ["advancedFarming"], unlocked: false, researched: false}
+   - improvedTools: {id: "improvedTools", name: "Improved Tools", knowledgeCost: 10, researchTime: 4, effect: "Increase resource gathering by 20%", prerequisites: [], unlocked: false, researched: false, category: "survival"}
+   - advancedFarming: {id: "advancedFarming", name: "Advanced Farming", knowledgeCost: 25, researchTime: 8, effect: "50% more food from crops", prerequisites: ["improvedTools"], unlocked: false, researched: false, category: "farming"}
+   - waterPurification: {id: "waterPurification", name: "Water Purification", knowledgeCost: 25, researchTime: 8, effect: "20% less water consumption", prerequisites: ["improvedTools"], unlocked: false, researched: false, category: "survival"}
+   - betterConstruction: {id: "betterConstruction", name: "Better Construction", knowledgeCost: 30, researchTime: 12, effect: "Buildings cost 25% less wood", prerequisites: ["improvedTools"], unlocked: false, researched: false, category: "building"}
+   - medicinalHerbs: {id: "medicinalHerbs", name: "Medicinal Herbs", knowledgeCost: 40, researchTime: 16, effect: "Party members heal 5% health per day", prerequisites: ["advancedFarming"], unlocked: false, researched: false, category: "medicine"}
 2. Add technologies: {} to initialGameState in settings.js
 3. Create technology tree UI in a new section in index.html with id="technology-module"
-4. Add functions: initializeTechnologies(), researchTechnology(id), checkTechnologyAvailability(), and applyTechnologyEffects()
-5. Add technology module button to main UI
-6. Add gameState.technologies to save/load in storage.js
-7. Connect to knowledge points system so researching consumes knowledge
+   - Design visually distinct from Upgrades panel with connecting lines showing prerequisites
+   - Include category filtering tabs
+   - Show research progress for technologies being researched
+4. Add functions:
+   - initializeTechnologies() - Set up technology system separately from upgrades
+   - startResearch(techId) - Begin research process (unlike upgrades which apply immediately)
+   - updateResearchProgress() - Progress active research during tick updates
+   - completeResearch(techId) - Apply effects when research time is complete
+   - checkTechnologyAvailability() - Update which technologies are available based on prerequisites
+   - applyTechnologyEffects() - Similar to applyUpgradeEffects() but for technologies
+5. Update game.js to conditionally show the Technology module after a specific game milestone (e.g., day 10 or when player reaches certain knowledge points)
+6. Connect to the time.js tick system to advance research over game time
+7. Add gameState.technologies to save/load in storage.js
+8. Integrate with the existing upgrade system:
+   - Some technologies can unlock new upgrades
+   - Some upgrades can reduce research time or costs
+   - Keep both systems visible simultaneously in late game
+9. Add tutorial message explaining the difference between immediate upgrades and time-based research
 ```
 
 ### 5. Add Expedition System for Resource Gathering

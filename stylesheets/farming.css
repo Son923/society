@@ -94,6 +94,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
 
       .lucide {
         width: 2em;
@@ -108,6 +109,37 @@
       &.ready-to-harvest:hover {
         background-color: var(--green);
         cursor: pointer;
+      }
+
+      /* Growth stage styles */
+      &.just-planted {
+        background-color: var(--background-color-alt);
+        opacity: 0.7;
+      }
+
+      &.quarter-grown {
+        background-color: rgba(var(--green-rgb), 0.25);
+      }
+
+      &.half-grown {
+        background-color: rgba(var(--green-rgb), 0.5);
+      }
+
+      &.almost-ready {
+        background-color: rgba(var(--green-rgb), 0.75);
+      }
+
+      /* Growth progress indicator */
+      .growth-progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        font-size: 0.7em;
+        text-align: center;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 2px 0;
       }
 
       &.growing {

@@ -49,6 +49,15 @@ const TUTORIAL_MESSAGES = [
     trigger: state => state.upgrades.well && !state.shownTutorials.includes('well_intro')
   },
   {
+    id: 'technology_intro',
+    message: "You've unlocked the Technology system! Unlike upgrades which apply immediately, technologies require time to research but provide powerful benefits. Use your knowledge points wisely!",
+    trigger: state => {
+      const techModuleUnlocked = document.getElementById('technology-module') &&
+        !document.getElementById('technology-module').classList.contains('mystery');
+      return techModuleUnlocked && !state.shownTutorials?.includes('technology_intro');
+    }
+  },
+  {
     id: 'hunting_intro',
     message: "You've built the Hunting Lodge! Hunt animals for food and other resources.",
     trigger: state => state.upgrades.huntingLodge && !state.shownTutorials.includes('hunting_intro')
