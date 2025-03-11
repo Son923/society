@@ -6,14 +6,15 @@
 
 import { gameState } from './settings.js';
 import { addLogEntry } from './log.js';
+import { t } from './translations/index.js';
 
 // Contentment level thresholds and their descriptions
 export const CONTENTMENT_LEVELS = {
-  veryHigh: { min: 75, name: 'Very Happy', icon: 'laugh', color: 'green' },
-  high: { min: 50, name: 'Happy', icon: 'smile', color: 'light-green' },
-  medium: { min: 25, name: 'Concerned', icon: 'meh', color: 'yellow' },
-  low: { min: 0, name: 'Unhappy', icon: 'frown', color: 'orange' },
-  veryLow: { min: -Infinity, name: 'Miserable', icon: 'angry', color: 'red' }
+  veryHigh: { min: 75, name: 'Very Happy', translationKey: 'veryHappy', icon: 'laugh', color: 'green' },
+  high: { min: 50, name: 'Happy', translationKey: 'happy', icon: 'smile', color: 'light-green' },
+  medium: { min: 25, name: 'Concerned', translationKey: 'concerned', icon: 'meh', color: 'yellow' },
+  low: { min: 0, name: 'Unhappy', translationKey: 'unhappy', icon: 'frown', color: 'orange' },
+  veryLow: { min: -Infinity, name: 'Miserable', translationKey: 'miserable', icon: 'angry', color: 'red' }
 };
 
 // Effects applied at different contentment levels
@@ -187,7 +188,7 @@ export function updateContentmentDisplay() {
   // Update the text
   const textElement = contentmentDisplay.querySelector('span');
   if (textElement) {
-    textElement.textContent = level.name;
+    textElement.textContent = level.translationKey ? t(level.translationKey) : level.name;
   }
 }
 

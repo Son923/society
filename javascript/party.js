@@ -11,6 +11,7 @@ import { addLogEntry } from './log.js';
 import { getContentmentEffects } from './contentment.js';
 import { specializationTypes, applySpecializationEffects } from './specializations.js';
 import { pauseForUIInteraction } from './time.js';
+import { t } from './translations/index.js';
 
 // Move this outside the class to be accessible by all instances
 const usedNames = new Set();
@@ -261,7 +262,7 @@ export function updatePartyDisplay() {
     personElement.innerHTML = `
       <div class="person-header">
         <h3><i data-lucide="person-standing" class="icon-gutter-grey"></i> ${person.name}</h3>
-        <div class="busy-label ${person.isDead ? 'dead' : (isBusy ? 'busy' : (isResting ? 'resting' : 'idle'))}">${person.isDead ? 'DEAD' : (isBusy ? `BUSY [${busyTimeLeft}h]` : (isResting ? 'RESTING' : 'IDLE'))}</div>
+        <div class="busy-label ${person.isDead ? 'dead' : (isBusy ? 'busy' : (isResting ? 'resting' : 'idle'))}">${person.isDead ? 'DEAD' : (isBusy ? `BUSY [${busyTimeLeft}h]` : (isResting ? 'RESTING' : t('idle')))}</div>
       </div>
       ${hasSpecializationsUpgrade ? `
       <div class="specialization">
@@ -285,7 +286,7 @@ export function updatePartyDisplay() {
         <table class="stats">
           ${['health', 'hunger', 'thirst', 'energy'].map(stat => `
             <tr>
-              <td>${stat.charAt(0).toUpperCase() + stat.slice(1)}</td>
+              <td>${t(stat)}</td>
               <td><div class="progress-bar"><div class="progress ${stat}-bar ${getProgressBarClass(person[stat])}" style="width: ${person[stat]}%;"></div></div></td>
               <td>${Math.floor(person[stat])}%</td>
             </tr>
@@ -295,15 +296,15 @@ export function updatePartyDisplay() {
       <div class="person-actions">
         <button data-action="eat" data-person="${index}" ${(person.isDead || isBusy || isResting || gameState.food < 5) ? 'disabled' : ''}>
           ${index === 0 ? '<span class="shortcut">u</span>' : index === 1 ? '<span class="shortcut">j</span>' : '<span class="shortcut">m</span>'}
-          Eat <span>[5 <i data-lucide="beef" class="icon dark-yellow"></i>]</span>
+          ${t('eat')} <span>[5 <i data-lucide="beef" class="icon dark-yellow"></i>]</span>
         </button>
         <button data-action="drink" data-person="${index}" ${(person.isDead || isBusy || isResting || gameState.water < 3) ? 'disabled' : ''}>
-          ${index === 0 ? '<span class="shortcut">i</span>' : index === 1 ? '<span class="shortcut">k</span>' : '<span class="shortcut">,</span>'}
-          Drink <span>[3 <i data-lucide="droplet" class="icon blue"></i>]</span>
+          ${index === 0 ? '<span class="shortcut">i</span>' : index === 1 ? '<span class="shortcut">k</span>' : '<span class="shortcut">n</span>'}
+          ${t('drink')} <span>[3 <i data-lucide="droplet" class="icon blue"></i>]</span>
         </button>
         <button data-action="sleep" data-person="${index}" ${(person.isDead || isBusy || isResting) ? 'disabled' : ''}>
-          ${index === 0 ? '<span class="shortcut">o</span>' : index === 1 ? '<span class="shortcut">l</span>' : '<span class="shortcut">.</span>'}
-          <i data-lucide="bed-single" class="icon magenta"></i> Rest
+          ${index === 0 ? '<span class="shortcut">o</span>' : index === 1 ? '<span class="shortcut">l</span>' : '<span class="shortcut">p</span>'}
+          ${t('rest')}
         </button>
       </div>
     `;
@@ -386,7 +387,7 @@ export function setPartyMemberSpecialization(personIndex, specializationType) {
 /**
  * Performs an action for a party member.
  * @param {number} personIndex - The index of the party member.
- * @param {string} action - The action to perform ('eat', 'drink', or 'sleep').
+ * @param {string} action - The action to perform.
  */
 export function performAction(personIndex, action) {
   const person = gameState.party[personIndex];
@@ -405,7 +406,7 @@ export function performAction(personIndex, action) {
         person.hunger = Math.min(100, person.hunger + 25);
         gameState.food -= 5;
         gameState.busyUntil[personIndex] = currentTime + 1;
-        addLogEntry(`${person.name} ate some food.`, 'info');
+        addLogEntry(`${person.name} ${t('eat').toLowerCase()} some ${t('food').toLowerCase()}.`, 'info');
       }
     },
     drink: () => {
@@ -413,12 +414,12 @@ export function performAction(personIndex, action) {
         person.thirst = Math.min(100, person.thirst + 25);
         gameState.water -= 3;
         gameState.busyUntil[personIndex] = currentTime + 1;
-        addLogEntry(`${person.name} drank some water.`, 'info');
+        addLogEntry(`${person.name} ${t('drink').toLowerCase()} some ${t('water').toLowerCase()}.`, 'info');
       }
     },
     sleep: () => {
       gameState.busyUntil[personIndex] = -1;
-      addLogEntry(`${person.name} started resting.`, 'info');
+      addLogEntry(`${person.name} started ${t('rest').toLowerCase()}.`, 'info');
     }
   };
 

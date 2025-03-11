@@ -8,12 +8,13 @@
   <meta name="description"
     content="Can you survive the apocalypse? Society Fail is a post-apocalyptic incremental game where you must scavenge for resources, fight off mutants, and navigate a world where civilization has fallen apart.">
   <link rel="stylesheet" href="stylesheets/core.css">
+  <link rel="stylesheet" href="stylesheets/language.css">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#be5046">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#be5046">
   <meta name="msapplication-TileColor" content="#000000">
   <meta name="theme-color" content="#000000">
 </head>
@@ -25,15 +26,15 @@
       <header>
         <i data-lucide="skull" class="icon"></i>
         <div>
-          <h1>Society Fail</h1>
-          <h2>Can you survive the apocalypse?</h2>
+          <h1 data-i18n="gameTitle">Society Fail</h1>
+          <h2 data-i18n="tagline">Can you survive the apocalypse?</h2>
         </div>
       </header>
 
       <section>
         <button data-difficulty="easy">
           <span class="shortcut">a</span>
-          <b>Easy</b>
+          <b data-i18n="easy">Easy</b>
           <div>
             <span class="food"><b></b> <i data-lucide="beef" class="icon red"></i></span>
             <span class="water"><b></b> <i data-lucide="droplet" class="icon blue"></i></span>
@@ -42,7 +43,7 @@
         </button>
         <button data-difficulty="medium">
           <span class="shortcut">s</span>
-          <b>Medium</b>
+          <b data-i18n="medium">Medium</b>
           <div>
             <span class="food"><b></b> <i data-lucide="beef" class="icon red"></i></span>
             <span class="water"><b></b> <i data-lucide="droplet" class="icon blue"></i></span>
@@ -51,15 +52,15 @@
         </button>
         <button data-difficulty="hard">
           <span class="shortcut">d</span>
-          <b>Hard</b>
+          <b data-i18n="hard">Hard</b>
           <div>
-            No resources <i data-lucide="circle-slash-2" class="icon red"></i>
+            <span data-i18n="noResources">No resources</span> <i data-lucide="circle-slash-2" class="icon red"></i>
           </div>
         </button>
       </section>
 
       <footer>
-        <p>Society Fail is <a href="https://github.com/Shpigford/society-fail" target="_blank">open source</a> and made
+        <p data-i18n="footerText">Society Fail is <a href="https://github.com/Shpigford/society-fail" target="_blank">open source</a> and made
           by
           <a href="https://x.com/shpigford" target="_blank">@shpigford</a>!
         </p>
@@ -71,7 +72,7 @@
     <header>
       <div class="logo">
         <i data-lucide="skull" class="icon red"></i>
-        <h1>Society Fail</h1>
+        <h1 data-i18n="gameTitle">Society Fail</h1>
       </div>
       <div class="resources">
         <div class="resource"><i data-lucide="beef" class="icon dark-yellow"></i><span>0</span></div>
@@ -82,19 +83,19 @@
       <div class="time-module">
         <div id="contentment-display" class="contentment-display">
           <i data-lucide="smile" class="icon light-green"></i>
-          <span>Content</span>
+          <span data-i18n="content">Content</span>
         </div>
         <div class="time-display">
           <div class="day-night-indicator"></div>
           <span id="time">Day 1, Hour 1</span>
         </div>
         <div class="button-container">
-          <button id="shortcuts-help">
+          <button id="shortcuts-help" title="Shortcuts">
             <span class="shortcut">h</span>
             <i data-lucide="keyboard" class="icon"></i>
           </button>
-          <button id="pause-game"><i data-lucide="pause" class="icon"></i></button>
-          <button id="reset-game"><i data-lucide="rotate-ccw" class="icon"></i></button>
+          <button id="pause-game" title="Pause"><i data-lucide="pause" class="icon"></i></button>
+          <button id="reset-game" title="Reset"><i data-lucide="rotate-ccw" class="icon"></i></button>
         </div>
       </div>
     </header>
@@ -103,29 +104,29 @@
       <button id="gatherFoodBtn" class="action-button">
         <span class="shortcut">q</span>
         <i data-lucide="beef" class="icon dark-yellow"></i>
-        <span>Gather Food</span>
+        <span data-i18n="gatherFood">Gather Food</span>
       </button>
       <button id="collectWaterBtn" class="action-button">
         <span class="shortcut">w</span>
         <i data-lucide="droplet" class="icon blue"></i>
-        <span>Collect Water</span>
+        <span data-i18n="collectWater">Collect Water</span>
       </button>
       <button id="chopWoodBtn" class="action-button">
         <span class="shortcut">e</span>
         <i data-lucide="tree-pine" class="icon green"></i>
-        <span>Chop Wood</span>
+        <span data-i18n="chopWood">Chop Wood</span>
       </button>
     </section>
 
     <section id="party-container">
-      <h2><i data-lucide="users" class="icon-dark"></i> Your Party</h2>
+      <h2><i data-lucide="users" class="icon-dark"></i> <span data-i18n="yourParty">Your Party</span></h2>
       <div id="party-display"></div>
     </section>
 
     <div id="game-modules">
       <div id="main-modules">
         <section id="log-module">
-          <h2 class="collapsible"><i data-lucide="cctv" class="icon-dark"></i> Activity Log <i data-lucide="chevron-up"
+          <h2 class="collapsible"><i data-lucide="cctv" class="icon-dark"></i> <span data-i18n="activityLog">Activity Log</span> <i data-lucide="chevron-up"
               class="toggle-icon"></i></h2>
           <div class="module-content">
             <div id="log-content"></div>
@@ -133,7 +134,7 @@
         </section>
 
         <section id="upgrades-module">
-          <h2 class="collapsible"><i data-lucide="book-plus" class="icon-dark"></i> Upgrades <i data-lucide="chevron-up"
+          <h2 class="collapsible"><i data-lucide="book-plus" class="icon-dark"></i> <span data-i18n="upgrades">Upgrades</span> <i data-lucide="chevron-up"
               class="toggle-icon"></i></h2>
           <div class="module-content">
             <div id="upgrades"></div>
@@ -141,7 +142,7 @@
         </section>
 
         <section id="achievements-module">
-          <h2 class="collapsible"><i data-lucide="trophy" class="icon-dark"></i> Achievements <i
+          <h2 class="collapsible"><i data-lucide="trophy" class="icon-dark"></i> <span data-i18n="achievements">Achievements</span> <i
               data-lucide="chevron-up" class="toggle-icon"></i></h2>
           <div class="module-content">
             <div id="achievements"></div>
@@ -153,50 +154,50 @@
         <section id="technology-module" class="mystery">
           <div class="mystery-content">
             <div class="icon"><i data-lucide="circle-help" class="icon gutter-grey"></i></div>
-            <div class="title">Ancient Knowledge</div>
-            <div class="description">What secrets await those who seek to understand?</div>
+            <div class="title" data-i18n="ancientKnowledge">Ancient Knowledge</div>
+            <div class="description" data-i18n="ancientKnowledgeDesc">What secrets await those who seek to understand?</div>
           </div>
         </section>
         <section id="farming-module" class="mystery">
           <div class="mystery-content">
             <div class="icon"><i data-lucide="circle-help" class="icon gutter-grey"></i></div>
-            <div class="title">Mysterious Crops</div>
-            <div class="description">What secrets lie beneath the soil?</div>
+            <div class="title" data-i18n="mysteriousCrops">Mysterious Crops</div>
+            <div class="description" data-i18n="mysteriousCropsDesc">What secrets lie beneath the soil?</div>
           </div>
         </section>
         <section id="well-module" class="mystery">
           <div class="mystery-content">
             <div class="icon"><i data-lucide="circle-help" class="icon gutter-grey"></i></div>
-            <div class="title">Hidden Waters</div>
-            <div class="description">Is there a source of life nearby?</div>
+            <div class="title" data-i18n="hiddenWaters">Hidden Waters</div>
+            <div class="description" data-i18n="hiddenWatersDesc">Is there a source of life nearby?</div>
           </div>
         </section>
         <section id="hunting-module" class="mystery">
           <div class="mystery-content">
             <div class="icon"><i data-lucide="circle-help" class="icon gutter-grey"></i></div>
-            <div class="title">Mysterious Tracks</div>
-            <div class="description">What creatures roam these lands?</div>
+            <div class="title" data-i18n="mysteriousTracks">Mysterious Tracks</div>
+            <div class="description" data-i18n="mysteriousTracksDesc">What creatures roam these lands?</div>
           </div>
         </section>
         <section id="lumber-mill-module" class="mystery">
           <div class="mystery-content">
             <div class="icon"><i data-lucide="circle-help" class="icon gutter-grey"></i></div>
-            <div class="title">Untamed Forest</div>
-            <div class="description">How can we harness nature's bounty?</div>
+            <div class="title" data-i18n="untamedForest">Untamed Forest</div>
+            <div class="description" data-i18n="untamedForestDesc">How can we harness nature's bounty?</div>
           </div>
         </section>
         <section id="watchtower-module" class="mystery">
           <div class="mystery-content">
             <div class="icon"><i data-lucide="circle-help" class="icon gutter-grey"></i></div>
-            <div class="title">Unexplored Horizon</div>
-            <div class="description">What lies beyond our sight?</div>
+            <div class="title" data-i18n="unexploredHorizon">Unexplored Horizon</div>
+            <div class="description" data-i18n="unexploredHorizonDesc">What lies beyond our sight?</div>
           </div>
         </section>
       </div>
     </div>
 
     <footer>
-      <p>Society Fail is <a href="https://github.com/Shpigford/society-fail" target="_blank">open source</a> and made
+      <p data-i18n="footerText">Society Fail is <a href="https://github.com/Shpigford/society-fail" target="_blank">open source</a> and made
         by
         <a href="https://x.com/shpigford" target="_blank">@shpigford</a>!
       </p>

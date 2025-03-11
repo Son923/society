@@ -9,6 +9,7 @@ import { initializeGame } from './game.js';
 import { initializeShortcuts } from './shortcuts.js';
 import { initializeShortcutsModal } from './shortcuts-modal.js';
 import './specializations.js'; // Import specializations module
+import { applyTranslations, initLanguageSelector } from './translations/index.js';
 
 /**
  * Event listener for DOMContentLoaded event.
@@ -20,6 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Create Lucide icons for the UI
   createLucideIcons();
+
+  // Initialize translations
+  applyTranslations();
+  initLanguageSelector();
 
   // Initialize the game
   initializeGame();

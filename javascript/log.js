@@ -1,4 +1,5 @@
 import { gameState } from './settings.js';
+import { t } from './translations/index.js';
 
 /**
  * Log Module

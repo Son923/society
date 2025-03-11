@@ -10,6 +10,7 @@ import { addLogEntry } from './log.js';
 import { createLucideIcons } from './utils.js';
 import { saveGameState } from './storage.js';
 import { unlockSecondaryModule } from './upgrades.js';
+import { t } from './translations/index.js';
 
 /**
  * Technology definitions with their costs, research times, effects, and prerequisites
@@ -279,7 +280,7 @@ export function updateTechnologiesUI() {
 
   // Add "All" filter
   const allFilter = document.createElement('button');
-  allFilter.textContent = 'All';
+  allFilter.textContent = t('all');
   allFilter.className = 'active';
   allFilter.dataset.category = 'all';
   filterContainer.appendChild(allFilter);
@@ -287,7 +288,7 @@ export function updateTechnologiesUI() {
   // Add category filters
   categories.forEach(category => {
     const filter = document.createElement('button');
-    filter.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+    filter.textContent = t(category);
     filter.dataset.category = category;
     filterContainer.appendChild(filter);
   });
@@ -298,180 +299,147 @@ export function updateTechnologiesUI() {
   if (gameState.activeResearch) {
     const activeResearchId = gameState.activeResearch.id;
     const activeTech = TECHNOLOGIES[activeResearchId];
-
-    if (activeTech) {
-      const activeResearchSection = document.createElement('div');
-      activeResearchSection.className = 'active-research';
-
-      const progress = gameState.technologies[activeResearchId]?.progress || 0;
-      const progressPercent = Math.round(progress * 100);
-      const timeRemaining = Math.ceil(activeTech.researchTime * (1 - progress));
-
-      activeResearchSection.innerHTML = `
-        <h3><i data-lucide="flask-conical" class="lucide"></i> Currently Researching</h3>
+    
+    const activeResearchSection = document.createElement('div');
+    activeResearchSection.className = 'active-research';
+    
+    const progressPercent = Math.min(100, Math.floor((gameState.activeResearch.progress / activeTech.researchTime) * 100));
+    
+    activeResearchSection.innerHTML = `
+      <h3>${t('research')} ${t('inProgress')}</h3>
+      <div class="research-item">
+        <div class="research-icon">
+          <i data-lucide="${activeTech.icon}" class="icon"></i>
+        </div>
         <div class="research-details">
-          <strong>${activeTech.name}:</strong> ${activeTech.effect}
+          <div class="research-name">${t(activeTech.id) || activeTech.name}</div>
+          <div class="research-progress">
+            <div class="progress-bar">
+              <div class="progress" style="width: ${progressPercent}%"></div>
+            </div>
+            <span>${progressPercent}%</span>
+          </div>
+          <div class="research-time">${t('timeRemaining')}: ${Math.ceil(activeTech.researchTime - gameState.activeResearch.progress)} ${t('hours')}</div>
         </div>
-        <div class="progress-bar">
-          <div class="progress" style="width: ${progressPercent}%"></div>
-        </div>
-        <div class="progress-text">
-          <span>${progressPercent}% complete</span>
-          <span>${timeRemaining} hours remaining</span>
-        </div>
-      `;
-
-      moduleContent.appendChild(activeResearchSection);
-    }
-  }
-
-  // Create technologies container
-  const techContainer = document.createElement('div');
-  techContainer.className = 'technologies-container';
-
-  // Create technology categories
-  const availableTechSection = document.createElement('div');
-  availableTechSection.className = 'tech-category available-technologies';
-  availableTechSection.innerHTML = '<h3>Available Technologies</h3>';
-  const availableTechItems = document.createElement('div');
-  availableTechItems.className = 'tech-items';
-  availableTechSection.appendChild(availableTechItems);
-
-  const researchedTechSection = document.createElement('div');
-  researchedTechSection.className = 'tech-category researched-technologies';
-  researchedTechSection.innerHTML = '<h3>Researched Technologies</h3>';
-  const researchedTechItems = document.createElement('div');
-  researchedTechItems.className = 'tech-items';
-  researchedTechSection.appendChild(researchedTechItems);
-
-  const lockedTechSection = document.createElement('div');
-  lockedTechSection.className = 'tech-category locked-technologies';
-  lockedTechSection.innerHTML = '<h3>Locked Technologies</h3>';
-  const lockedTechItems = document.createElement('div');
-  lockedTechItems.className = 'tech-items';
-  lockedTechSection.appendChild(lockedTechItems);
-
-  // Add technologies to their respective sections
-  for (const techId in TECHNOLOGIES) {
-    const tech = TECHNOLOGIES[techId];
-    const isResearched = gameState.technologies[techId]?.researched;
-    const isActiveResearch = gameState.activeResearch?.id === techId;
-
-    // Skip if it's the active research (already displayed)
-    if (isActiveResearch) {
-      continue;
-    }
-
-    const techElement = document.createElement('div');
-    techElement.className = `tech-item ${isResearched ? 'researched' : tech.unlocked ? 'available' : 'locked'}`;
-    techElement.dataset.techId = techId;
-    techElement.dataset.category = tech.category;
-
-    // Create tech header
-    const techHeader = document.createElement('div');
-    techHeader.className = 'tech-header';
-
-    techHeader.innerHTML = `
-      <div class="tech-icon"><i data-lucide="${tech.icon}" class="lucide"></i></div>
-      <div class="tech-name">${tech.name}</div>
-      <div class="tech-status ${isResearched ? 'researched' : tech.unlocked ? 'available' : 'locked'}">
-        ${isResearched ? 'Researched' : tech.unlocked ? 'Available' : 'Locked'}
       </div>
     `;
+    
+    moduleContent.appendChild(activeResearchSection);
+  }
 
-    techElement.appendChild(techHeader);
-
-    // Create tech content
-    const techContent = document.createElement('div');
-    techContent.className = 'tech-content';
-
-    let contentHTML = `<div class="tech-effect">${tech.effect}</div>`;
-
-    if (isResearched) {
-      // No additional content needed for researched technologies
-    } else if (tech.unlocked) {
-      contentHTML += `
-        <div class="tech-cost">
-          <span class="knowledge"><i data-lucide="book" class="lucide"></i> ${tech.knowledgeCost}</span>
-          <span class="time"><i data-lucide="clock" class="lucide"></i> ${tech.researchTime} hours</span>
+  // Create available technologies section
+  const availableTechSection = document.createElement('div');
+  availableTechSection.className = 'available-technologies';
+  availableTechSection.innerHTML = `<h3>${t('availableTechnologies')}</h3>`;
+  
+  const availableTechList = document.createElement('div');
+  availableTechList.className = 'tech-list';
+  
+  // Filter technologies by selected category
+  const selectedCategory = document.querySelector('.tech-category-filters button.active')?.dataset.category || 'all';
+  
+  // Get available technologies
+  const availableTechs = Object.values(TECHNOLOGIES).filter(tech => 
+    tech.unlocked && !tech.researched && 
+    (selectedCategory === 'all' || tech.category === selectedCategory)
+  );
+  
+  if (availableTechs.length === 0) {
+    availableTechList.innerHTML = `<p class="no-techs">${t('noAvailableTechnologies')}</p>`;
+  } else {
+    availableTechs.forEach(tech => {
+      const techItem = document.createElement('div');
+      techItem.className = 'tech-item';
+      techItem.dataset.techId = tech.id;
+      
+      const canResearch = gameState.knowledge >= tech.knowledgeCost && !gameState.activeResearch;
+      
+      techItem.innerHTML = `
+        <div class="tech-icon">
+          <i data-lucide="${tech.icon}" class="icon ${canResearch ? '' : 'disabled'}"></i>
         </div>
-        <button class="research-button" data-tech-id="${techId}">Research</button>
+        <div class="tech-details">
+          <div class="tech-name">${t(tech.id) || tech.name}</div>
+          <div class="tech-effect">${t(tech.id + 'Desc') || tech.effect}</div>
+          <div class="tech-cost">
+            <span>${t('requires')}: ${tech.knowledgeCost} <i data-lucide="book" class="icon magenta"></i></span>
+            <span>${tech.researchTime} ${t('hours')}</span>
+          </div>
+        </div>
+        <button class="research-button" data-tech-id="${tech.id}" ${canResearch ? '' : 'disabled'}>
+          ${t('research')}
+        </button>
       `;
-    } else {
-      // Show prerequisites for locked technologies
-      const prereqNames = tech.prerequisites.map(prereqId => TECHNOLOGIES[prereqId]?.name || prereqId).join(', ');
-      contentHTML += `<div class="tech-prerequisites">Requires: ${prereqNames}</div>`;
-    }
-
-    techContent.innerHTML = contentHTML;
-    techElement.appendChild(techContent);
-
-    // Add to appropriate section
-    if (isResearched) {
-      researchedTechItems.appendChild(techElement);
-    } else if (tech.unlocked) {
-      availableTechItems.appendChild(techElement);
-    } else {
-      lockedTechItems.appendChild(techElement);
-    }
+      
+      availableTechList.appendChild(techItem);
+    });
   }
-
-  // Add sections to container if they have children beyond the header
-  if (availableTechItems.childElementCount > 0) {
-    techContainer.appendChild(availableTechSection);
+  
+  availableTechSection.appendChild(availableTechList);
+  moduleContent.appendChild(availableTechSection);
+  
+  // Create locked technologies section
+  const lockedTechSection = document.createElement('div');
+  lockedTechSection.className = 'locked-technologies';
+  lockedTechSection.innerHTML = `<h3>${t('lockedTechnologies')}</h3>`;
+  
+  const lockedTechList = document.createElement('div');
+  lockedTechList.className = 'tech-list';
+  
+  // Get locked technologies
+  const lockedTechs = Object.values(TECHNOLOGIES).filter(tech => 
+    !tech.unlocked && !tech.researched && 
+    (selectedCategory === 'all' || tech.category === selectedCategory)
+  );
+  
+  if (lockedTechs.length === 0) {
+    lockedTechList.innerHTML = `<p class="no-techs">${t('noLockedTechnologies')}</p>`;
+  } else {
+    lockedTechs.forEach(tech => {
+      const techItem = document.createElement('div');
+      techItem.className = 'tech-item locked';
+      
+      techItem.innerHTML = `
+        <div class="tech-icon">
+          <i data-lucide="${tech.icon}" class="icon disabled"></i>
+        </div>
+        <div class="tech-details">
+          <div class="tech-name">${t(tech.id) || tech.name}</div>
+          <div class="tech-effect">${t(tech.id + 'Desc') || tech.effect}</div>
+          <div class="tech-requirements">
+            <span>${t('requires')}: ${t('improvedTools')}</span>
+          </div>
+        </div>
+        <div class="locked-indicator">
+          <i data-lucide="lock" class="icon"></i>
+        </div>
+      `;
+      
+      lockedTechList.appendChild(techItem);
+    });
   }
-
-  if (researchedTechItems.childElementCount > 0) {
-    techContainer.appendChild(researchedTechSection);
-  }
-
-  if (lockedTechItems.childElementCount > 0) {
-    techContainer.appendChild(lockedTechSection);
-  }
-
-  // If no technologies are available, show a message
-  if (techContainer.childElementCount === 0) {
-    const noTechMessage = document.createElement('div');
-    noTechMessage.className = 'no-technologies';
-    noTechMessage.textContent = 'No technologies available yet. Gather more knowledge to unlock technologies.';
-    techContainer.appendChild(noTechMessage);
-  }
-
-  moduleContent.appendChild(techContainer);
-
-  // Add event listeners
-  const researchButtons = techModule.querySelectorAll('.research-button');
-  researchButtons.forEach(button => {
-    button.addEventListener('click', (event) => {
-      const techId = event.target.dataset.techId;
+  
+  lockedTechSection.appendChild(lockedTechList);
+  moduleContent.appendChild(lockedTechSection);
+  
+  // Add event listeners to category filters
+  document.querySelectorAll('.tech-category-filters button').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('.tech-category-filters button').forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+      updateTechnologiesUI();
+    });
+  });
+  
+  // Add event listeners to research buttons
+  document.querySelectorAll('.research-button').forEach(button => {
+    button.addEventListener('click', () => {
+      const techId = button.dataset.techId;
       startResearch(techId);
     });
   });
-
-  // Add category filter functionality
-  const categoryFilters = techModule.querySelectorAll('.tech-category-filters button');
-  categoryFilters.forEach(filter => {
-    filter.addEventListener('click', (event) => {
-      // Remove active class from all filters
-      categoryFilters.forEach(f => f.classList.remove('active'));
-
-      // Add active class to clicked filter
-      event.target.classList.add('active');
-
-      const category = event.target.dataset.category;
-      const techItems = techModule.querySelectorAll('.tech-item');
-
-      techItems.forEach(item => {
-        if (category === 'all' || item.dataset.category === category) {
-          item.style.display = '';
-        } else {
-          item.style.display = 'none';
-        }
-      });
-    });
-  });
-
-  // Initialize Lucide icons
+  
+  // Create Lucide icons
   createLucideIcons();
 }
 

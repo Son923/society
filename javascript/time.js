@@ -5,6 +5,7 @@
 
 import { gameState, TICK_INTERVAL } from './settings.js';
 import { updateGameState } from './game.js';
+import { t } from './translations/index.js';
 
 let isPaused = false;
 let tickInterval = null;
@@ -53,7 +54,7 @@ function tick() {
 export function updateTimeDisplay() {
   const timeElement = document.getElementById('time');
   if (timeElement) {
-    timeElement.textContent = `Day ${gameState.day}, Hour ${gameState.hour}`;
+    timeElement.textContent = `${t('day')} ${gameState.day}, ${t('hour')} ${gameState.hour}`;
   }
 }
 
