@@ -12,6 +12,7 @@ import { initializeWatchtower } from './watchtower.js';
 import { applyAdvancedFarmingEffects } from './farming.js';
 import { getWoodCostReduction } from './specializations.js';
 import { initializeMedicalTent } from './medicaltent.js';
+import { t } from './translations/index.js';
 
 /**
  * Buys an upgrade if the player can afford it.
@@ -50,9 +51,9 @@ export function buyUpgrade(upgradeId) {
 
     // Log the upgrade purchase with discount information if applicable
     if (adjustedCosts.wood !== upgrade.cost.wood) {
-      addLogEntry(`Unlocked upgrade: ${upgrade.name} (Builder discount applied: ${upgrade.cost.wood - adjustedCosts.wood} wood saved)`, 'success');
+      addLogEntry(`${t('unlockedUpgrade')}: ${t(upgradeId)} (${t('builderDiscount')}: ${upgrade.cost.wood - adjustedCosts.wood} ${t('wood')} ${t('saved')})`, 'success');
     } else {
-      addLogEntry(`Unlocked upgrade: ${upgrade.name}`, 'success');
+      addLogEntry(`${t('unlockedUpgrade')}: ${t(upgradeId)}`, 'success');
     }
 
     applyUpgradeEffects(upgradeId);
@@ -61,7 +62,7 @@ export function buyUpgrade(upgradeId) {
     updateUpgradesUI();
     saveGameState(); // Add this line to save the game state after buying an upgrade
   } else {
-    addLogEntry(`Cannot afford upgrade: ${upgrade.name}`, 'error');
+    addLogEntry(`${t('cannotAffordUpgrade')}: ${t(upgradeId)}`, 'error');
   }
 }
 
@@ -166,7 +167,7 @@ export function checkUpgradeAvailability() {
         if ((upgrade.prerequisite && gameState.upgrades[upgrade.prerequisite]) || !upgrade.prerequisite) {
           upgrade.available = canAfford;
           if (canAfford) {
-            addLogEntry(`New upgrade available: ${upgrade.name}`, 'info');
+            addLogEntry(`${t('newUpgradeAvailable')}: ${t(upgradeId)}`, 'info');
           }
         }
       }
@@ -235,7 +236,7 @@ export function updateUpgradesUI() {
 
       upgradeButton.innerHTML = `
         <div class="upgrade-name">
-          <span class="name">${upgrade.name}</span>
+          <span class="name">${t(upgradeId)}</span>
           <span class="cost">
             ${Object.entries(upgrade.cost).map(([resource, amount]) => {
         if (resource === 'wood' && builderDiscountApplied) {
@@ -255,8 +256,8 @@ export function updateUpgradesUI() {
       }).join('')}
           </span>
         </div>
-        <div class="upgrade-effect">${upgrade.effect}</div>
-        ${builderDiscountApplied ? `<div class="builder-discount">Builder discount applied: ${Math.round((1 - discountedWoodCost / originalWoodCost) * 100)}%</div>` : ''}
+        <div class="upgrade-effect">${t(upgradeId + 'Desc')}</div>
+        ${builderDiscountApplied ? `<div class="builder-discount">${t('builderDiscount')}: ${Math.round((1 - discountedWoodCost / originalWoodCost) * 100)}%</div>` : ''}
       `;
 
       if (!gameState.upgrades[upgradeId]) {
@@ -268,9 +269,7 @@ export function updateUpgradesUI() {
   }
 
   // Refresh Lucide icons
-  if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
-    lucide.createIcons();
-  }
+  createLucideIcons();
 }
 
 /**
@@ -329,7 +328,7 @@ function checkPrerequisites(purchasedUpgradeId) {
   for (const [upgradeId, upgrade] of Object.entries(UPGRADES)) {
     if (!gameState.upgrades[upgradeId] && upgrade.prerequisite === purchasedUpgradeId) {
       upgrade.available = true;
-      addLogEntry(`New upgrade available: ${upgrade.name}`, 'info');
+      addLogEntry(`${t('newUpgradeAvailable')}: ${t(upgradeId)}`, 'info');
     }
   }
 }

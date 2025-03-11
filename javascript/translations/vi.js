@@ -151,6 +151,11 @@ export const vi = {
   woodGatheringDroneDesc: "Tự động thu thập một lượng nhỏ gỗ theo thời gian",
   specializations: "Đào tạo Chuyên môn",
   specializationsDesc: "Cho phép các thành viên chuyên môn hóa trong các vai trò khác nhau để nhận thêm lợi ích",
+  builderDiscount: "Đã áp dụng giảm giá của Thợ xây",
+  unlockedUpgrade: "Đã mở khóa nâng cấp",
+  cannotAffordUpgrade: "Không đủ tài nguyên cho nâng cấp",
+  newUpgradeAvailable: "Nâng cấp mới khả dụng",
+  saved: "tiết kiệm",
   
   // Random events
   randomEvent: "Sự kiện ngẫu nhiên",
