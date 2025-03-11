@@ -8,7 +8,7 @@ export const vi = {
   easy: "Dễ",
   medium: "Trung bình",
   hard: "Khó",
-  noResources: "Không có tài nguyên",
+  noResources: "Không tài nguyên",
   
   // Resources
   food: "Thức ăn",
