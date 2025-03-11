@@ -75,44 +75,61 @@
   .tech-category-filters {
     display: flex;
     width: 100%;
-    margin-bottom: 1rem;
+    border-bottom: 1px solid #333;
   }
 
   .tech-category-filters button {
     flex: 1;
     padding: 0.75rem 0;
     border: none;
-    background-color: var(--bg-dark);
-    color: var(--text);
+    background-color: #000;
+    color: #fff;
     text-transform: uppercase;
     font-weight: bold;
+    font-size: 0.8rem;
     cursor: pointer;
     transition: background-color 0.2s;
   }
 
   .tech-category-filters button:hover {
-    background-color: var(--bg-light);
+    background-color: #222;
   }
 
   .tech-category-filters button.active {
-    background-color: var(--magenta);
-    color: var(--bg-darker);
+    background-color: #b967ce;
+    color: #000;
+  }
+
+  .available-technologies-header {
+    background-color: #111;
+    padding: 0.5rem 1rem;
+    margin-top: 1rem;
+  }
+  
+  .available-technologies-header h3 {
+    color: #fff;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin: 0;
   }
 
   .active-research,
   .available-technologies,
   .locked-technologies {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
+    padding: 0 0.5rem;
   }
 
   .active-research h3,
   .available-technologies h3,
   .locked-technologies h3 {
-    color: var(--text);
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
+    color: #fff;
+    margin: 1rem 0 0.5rem 0;
+    font-size: 0.8rem;
     text-transform: uppercase;
-    border-bottom: 1px solid var(--text-muted);
+    font-weight: bold;
+    border-bottom: 1px solid #444;
     padding-bottom: 0.25rem;
   }
 
@@ -123,16 +140,16 @@
   }
 
   .tech-item {
-    background-color: var(--bg-darker);
-    border: 1px solid var(--text-muted);
+    background-color: #111;
+    border: 1px solid #333;
   }
 
   .tech-item.available {
-    border-color: var(--text);
+    border-color: #fff;
   }
 
   .tech-item.active {
-    border-color: var(--magenta);
+    border-color: #b967ce;
   }
 
   .tech-header {
@@ -153,7 +170,7 @@
   .tech-icon .icon {
     width: 1.25rem;
     height: 1.25rem;
-    color: var(--text-muted);
+    color: #777;
   }
 
   .tech-name {
@@ -161,6 +178,7 @@
     font-weight: bold;
     text-transform: uppercase;
     font-size: 0.9rem;
+    color: #fff;
   }
 
   .tech-status {
@@ -168,31 +186,31 @@
     padding: 0.2rem 0.4rem;
     text-transform: uppercase;
     font-weight: bold;
-    background-color: var(--text-muted);
-    color: var(--bg-darker);
+    background-color: #444;
+    color: #000;
   }
 
   .tech-status.available {
-    background-color: var(--text);
+    background-color: #fff;
   }
 
   .tech-status.active {
-    background-color: var(--magenta);
+    background-color: #b967ce;
   }
 
   .tech-status.locked {
-    background-color: var(--text-muted);
+    background-color: #444;
   }
 
   .tech-content {
     padding: 0.5rem;
-    border-top: 1px solid var(--text-muted);
+    border-top: 1px solid #333;
   }
 
   .tech-effect {
     font-size: 0.8rem;
     margin-bottom: 0.5rem;
-    color: var(--text);
+    color: #fff;
   }
 
   .tech-cost {
@@ -209,16 +227,16 @@
   }
 
   .tech-cost .knowledge {
-    color: var(--magenta);
+    color: #b967ce;
   }
 
   .tech-cost .time {
-    color: var(--text-muted);
+    color: #777;
   }
 
   .tech-prerequisites {
     font-size: 0.75rem;
-    color: var(--text-muted);
+    color: #777;
     font-style: italic;
     margin-bottom: 0.5rem;
   }
@@ -229,24 +247,24 @@
 
   .tech-progress .progress-bar {
     height: 0.4rem;
-    background-color: var(--bg-dark);
+    background-color: #222;
     border: none;
     margin-bottom: 0.2rem;
   }
 
   .tech-progress .progress {
     height: 100%;
-    background-color: var(--magenta);
+    background-color: #b967ce;
   }
 
   .tech-progress .progress-text {
     font-size: 0.7rem;
-    color: var(--text-muted);
+    color: #777;
   }
 
   .research-button {
-    background-color: var(--magenta);
-    color: var(--bg-darker);
+    background-color: #b967ce;
+    color: #000;
     border: none;
     padding: 0.3rem 0.6rem;
     font-size: 0.8rem;
@@ -256,11 +274,11 @@
   }
 
   .research-button:hover:not(:disabled) {
-    background-color: var(--text);
+    background-color: #fff;
   }
 
   .research-button:disabled {
-    background-color: var(--text-muted);
+    background-color: #444;
     cursor: not-allowed;
     opacity: 0.7;
   }
@@ -268,7 +286,7 @@
   .no-techs {
     padding: 1rem;
     text-align: center;
-    color: var(--text-muted);
+    color: #777;
     font-style: italic;
     font-size: 0.9rem;
   }
