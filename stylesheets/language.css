@@ -2,53 +2,64 @@
 .language-selector {
   display: flex;
   align-items: center;
-  margin-right: 1rem;
-  padding: 0.5rem;
+  gap: 0.25rem;
+  margin-right: 0.5rem;
+  padding: 0.25rem;
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 4px;
 }
 
-.language-selector span {
-  margin-right: 0.5rem;
+.language-selector .icon {
+  width: 1rem;
+  height: 1rem;
   color: #ccc;
-  font-size: 0.9rem;
 }
 
-.language-selector button {
+.language-selector .language-dropdown {
   background: none;
   border: 1px solid #444;
   color: #ccc;
-  padding: 0.25rem 0.5rem;
-  margin: 0 0.25rem;
+  padding: 0.15rem 0.25rem;
   border-radius: 3px;
   cursor: pointer;
   font-size: 0.8rem;
   transition: all 0.2s ease;
+  background-color: transparent;
+  min-width: 3.5rem;
+  text-align: center;
 }
 
-.language-selector button:hover {
+.language-selector .language-dropdown:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.language-selector button.active {
-  background-color: #444;
-  color: #fff;
+.language-selector .language-dropdown:focus {
+  outline: none;
   border-color: #666;
+}
+
+.language-selector .language-dropdown option {
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 0.25rem;
+  text-align: center;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .language-selector {
-    margin-right: 0.5rem;
-    padding: 0.25rem;
+    margin-right: 0.25rem;
+    padding: 0.15rem;
   }
   
-  .language-selector span {
-    font-size: 0.8rem;
+  .language-selector .icon {
+    width: 0.9rem;
+    height: 0.9rem;
   }
   
-  .language-selector button {
-    padding: 0.15rem 0.3rem;
+  .language-selector .language-dropdown {
+    padding: 0.1rem 0.2rem;
     font-size: 0.7rem;
+    min-width: 3rem;
   }
 } 

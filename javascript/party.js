@@ -283,15 +283,20 @@ export function updatePartyDisplay() {
       </div>
       ` : ''}
       <div class="stats-container">
-        <table class="stats">
-          ${['health', 'hunger', 'thirst', 'energy'].map(stat => `
-            <tr>
-              <td>${t(stat)}</td>
-              <td><div class="progress-bar"><div class="progress ${stat}-bar ${getProgressBarClass(person[stat])}" style="width: ${person[stat]}%;"></div></div></td>
-              <td>${Math.floor(person[stat])}%</td>
-            </tr>
-          `).join('')}
-        </table>
+        <div class="avatar-stats-wrapper">
+          <div class="avatar">
+            <i data-lucide="user" class="avatar-icon ${person.isDead ? 'dead' : ''}"></i>
+          </div>
+          <table class="stats">
+            ${['health', 'hunger', 'thirst', 'energy'].map(stat => `
+              <tr>
+                <td>${t(stat)}</td>
+                <td><div class="progress-bar"><div class="progress ${stat}-bar ${getProgressBarClass(person[stat])}" style="width: ${person[stat]}%;"></div></div></td>
+                <td>${Math.floor(person[stat])}%</td>
+              </tr>
+            `).join('')}
+          </table>
+        </div>
       </div>
       <div class="person-actions">
         <button data-action="eat" data-person="${index}" ${(person.isDead || isBusy || isResting || gameState.food < 5) ? 'disabled' : ''}>

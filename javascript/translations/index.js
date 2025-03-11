@@ -1,6 +1,7 @@
 // Import all language files
 import { en } from './en.js';
 import { vi } from './vi.js';
+import { createLucideIcons } from '../utils.js';
 
 // Available languages
 export const languages = {
@@ -77,33 +78,43 @@ export function initLanguageSelector() {
     selector.id = 'language-selector';
     selector.className = 'language-selector';
     
-    const label = document.createElement('span');
-    label.textContent = t('language') + ': ';
-    selector.appendChild(label);
+    // Add globe icon instead of text label
+    const icon = document.createElement('i');
+    icon.setAttribute('data-lucide', 'globe');
+    icon.className = 'icon';
+    selector.appendChild(icon);
+    
+    // Create dropdown menu
+    const dropdown = document.createElement('select');
+    dropdown.className = 'language-dropdown';
+    dropdown.title = t('language'); // Add tooltip
     
     // Add language options
     Object.keys(languages).forEach(langCode => {
-      const langButton = document.createElement('button');
-      langButton.textContent = t(langCode === 'en' ? 'english' : 'vietnamese');
-      langButton.className = langCode === currentLanguage ? 'active' : '';
-      langButton.onclick = () => {
-        if (setLanguage(langCode)) {
-          // Update active class
-          document.querySelectorAll('#language-selector button').forEach(btn => {
-            btn.className = btn.textContent === langButton.textContent ? 'active' : '';
-          });
-          // Apply translations
-          applyTranslations();
-        }
-      };
-      selector.appendChild(langButton);
+      const option = document.createElement('option');
+      option.value = langCode;
+      option.textContent = langCode.toUpperCase(); // Just show language code
+      option.selected = langCode === currentLanguage;
+      dropdown.appendChild(option);
     });
+    
+    // Add change event listener
+    dropdown.addEventListener('change', (e) => {
+      if (setLanguage(e.target.value)) {
+        applyTranslations();
+      }
+    });
+    
+    selector.appendChild(dropdown);
     
     // Add to the page - in the header next to the time module
     const timeModule = document.querySelector('.time-module');
     if (timeModule) {
       timeModule.parentNode.insertBefore(selector, timeModule);
     }
+
+    // Create Lucide icons
+    createLucideIcons();
   }
 }
 

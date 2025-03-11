@@ -52,6 +52,22 @@
       align-items: stretch;
       border-left: var(--border-thickness) solid var(--text-color);
 
+      .contentment-display {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        padding: 0 1em;
+        border-right: var(--border-thickness) solid var(--text-color);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9em;
+
+        .icon {
+          width: 1.5em;
+          height: 1.5em;
+        }
+      }
+
       .time-display {
         display: flex;
         align-items: center;
@@ -92,57 +108,82 @@
     }
   }
 
-  @media (max-width: 1100px) {
+  @media (max-width: 100ch) {
     header {
-      flex-direction: column;
-
       .logo {
-        width: 100%;
-        border-bottom: var(--border-thickness) solid var(--text-color);
+        font-size: 0.9em;
 
-        h1 {
-          border-right: none;
-          padding-right: 0;
+        .icon {
+          width: 2.5rem;
+          height: 2.5rem;
+          padding: 0.4rem;
         }
       }
 
       .resources {
-        width: 100%;
-        justify-content: space-around;
-        padding: 0.5em 0;
-        gap: 0;
+        font-size: 1.2em;
+        gap: 1em;
+        padding: 0 0.5em;
+      }
+
+      .time-module {
+        .contentment-display {
+          padding: 0 0.8em;
+          font-size: 0.8em;
+
+          .icon {
+            width: 1.3em;
+            height: 1.3em;
+          }
+        }
+        .time-display {
+          padding: 0 0.8em;
+          gap: 0.5em;
+          font-size: 0.9em;
+
+          .day-night-indicator {
+            width: 1.5rem;
+            height: 1.5rem;
+          }
+        }
+        .button-container button {
+          font-size: 1.2em;
+          padding: 0 0.8em;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 60ch) {
+    header {
+      .logo {
+        flex: 1 1 100%;
+        border-bottom: var(--border-thickness) solid var(--text-color);
+      }
+
+      .resources {
+        font-size: 1em;
+        gap: 0.8em;
+        padding: 0.5em;
+        flex: 1;
+        justify-content: center;
         border-bottom: var(--border-thickness) solid var(--text-color);
       }
 
       .time-module {
-        width: 100%;
+        flex: 1 1 100%;
         border-left: none;
-        flex-direction: column;
 
-        .time-display {
-          width: 100%;
-          padding: 0.5em 0;
+        .contentment-display {
+          flex: 1;
           justify-content: center;
+          border-right: none;
           border-bottom: var(--border-thickness) solid var(--text-color);
         }
 
-        .button-container {
-          display: flex;
-          width: 100%;
-
-          button {
-            flex: 1;
-            border-left: var(--border-thickness) solid var(--text-color);
-            border-top: none;
-            text-align: center;
-            justify-content: center;
-            align-items: center;
-            padding: 0.5em 0;
-
-            &:first-child {
-              border-left: none;
-            }
-          }
+        .time-display {
+          flex: 1;
+          justify-content: center;
         }
       }
     }
