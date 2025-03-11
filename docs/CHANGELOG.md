@@ -17,9 +17,15 @@ All notable changes to Society Fail will be documented in this file.
   - Farming UI elements
   - Planting and harvesting messages
 - English translations for party member status indicators and farming content
+- Added missing translations for technology module:
+  - Technology names and descriptions
+  - Technology categories (Survival, Farming, Building, Medicine)
+  - Research status messages
+  - Research completion message
 
 ### Changed
 - Changed default language from English to Vietnamese
 - Updated `party.js` to use translation function for status indicators
 - Updated `farming.js` to use translation function for all farming-related text
+- Updated `technologies.js` to use translation function for all technology-related text
 - Updated documentation in `TRANSLATIONS.md` to reflect recent translation additions 

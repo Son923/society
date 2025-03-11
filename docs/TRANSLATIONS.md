@@ -27,6 +27,13 @@ The following sections have been recently translated:
 - Added translations for farming-related messages
 - Updated the farming UI to display translated crop names and messages
 
+### Technology System (March 2024)
+- Added translations for technology names and descriptions
+- Added translations for technology categories (Survival, Farming, Building, Medicine)
+- Added translations for research status messages
+- Added translations for research completion messages
+- Updated the technology UI to display translated content
+
 ## How to Add or Update Translations
 
 ### 1. File Structure

@@ -87,40 +87,37 @@ export const vi = {
   
   // Technologies
   technologies: "Công nghệ",
-  availableTechnologies: "Công nghệ khả dụng",
-  lockedTechnologies: "Công nghệ bị khóa",
-  research: "Nghiên cứu",
-  available: "Khả dụng",
-  locked: "Bị khóa",
-  inProgress: "Đang tiến hành",
-  timeRemaining: "Thời gian còn lại",
-  hours: "giờ",
-  noAvailableTechnologies: "Không có công nghệ khả dụng",
-  noLockedTechnologies: "Không có công nghệ bị khóa",
-  
-  // Technology categories
   all: "Tất cả",
   survival: "Sinh tồn",
   farming: "Nông nghiệp",
   building: "Xây dựng",
   medicine: "Y học",
+  availableTechnologies: "Công nghệ khả dụng",
+  lockedTechnologies: "Công nghệ bị khóa",
+  research: "Nghiên cứu",
+  inProgress: "Đang tiến hành",
+  available: "Khả dụng",
+  locked: "Bị khóa",
+  requires: "Yêu cầu",
+  timeRemaining: "Thời gian còn lại",
+  hours: "giờ",
+  noAvailableTechnologies: "Không có công nghệ khả dụng",
+  noLockedTechnologies: "Không có công nghệ bị khóa",
+  researchCompleted: "Nghiên cứu hoàn thành: {technology}",
   
-  // Specific technologies
+  // Technology names and descriptions
   improvedTools: "Công cụ cải tiến",
-  advancedFarming: "Nông nghiệp tiên tiến",
-  waterPurification: "Lọc nước",
-  betterConstruction: "Xây dựng tốt hơn",
-  medicinalHerbs: "Thảo dược y tế",
-  
-  // Technology descriptions
   improvedToolsDesc: "Tăng thu thập tài nguyên lên 20%",
-  advancedFarmingDesc: "Thêm 50% thức ăn từ cây trồng",
+  advancedFarming: "Nông nghiệp tiên tiến",
+  advancedFarmingDesc: "Tăng 50% lương thực từ cây trồng",
+  waterPurification: "Lọc nước",
   waterPurificationDesc: "Giảm 20% tiêu thụ nước",
-  betterConstructionDesc: "Các công trình tốn ít gỗ hơn 25%",
-  medicinalHerbsDesc: "Thành viên nhóm hồi 5% sức khỏe mỗi ngày",
+  betterConstruction: "Xây dựng tốt hơn",
+  betterConstructionDesc: "Các tòa nhà tiêu tốn ít hơn 25% gỗ",
+  medicinalHerbs: "Thảo dược y tế",
+  medicinalHerbsDesc: "Thành viên nhóm hồi 5% máu mỗi ngày",
   
   // Technology requirements
-  requires: "Yêu cầu",
   hours: "giờ",
   
   // Upgrades

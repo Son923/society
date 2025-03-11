@@ -97,6 +97,9 @@ export function initializeTechnologies() {
 
   // Update the UI
   updateTechnologiesUI();
+  
+  // Initialize filter buttons if they exist in the DOM
+  initTechnologyFilters();
 }
 
 /**
@@ -183,27 +186,33 @@ export function updateResearchProgress() {
  */
 export function completeResearch(techId) {
   const tech = TECHNOLOGIES[techId];
-
-  if (!tech) {
-    return;
-  }
-
+  if (!tech) return;
+  
   // Mark as researched
+  tech.researched = true;
+  
+  // Store in gameState
+  if (!gameState.technologies[techId]) {
+    gameState.technologies[techId] = {};
+  }
   gameState.technologies[techId].researched = true;
-  gameState.technologies[techId].progress = 1;
-
+  
   // Clear active research
   gameState.activeResearch = null;
-
+  
   // Apply technology effects
   applyTechnologyEffects(techId);
-
-  // Check for newly available technologies
+  
+  // Log the completion
+  addLogEntry(t('researchCompleted', { technology: t(techId) }), 'success');
+  
+  // Check if new technologies are now available
   checkTechnologyAvailability();
-
-  addLogEntry(`Research complete: ${tech.name}`, 'success');
-  updateGameState();
+  
+  // Update UI
   updateTechnologiesUI();
+  
+  // Save game state
   saveGameState();
 }
 
@@ -262,7 +271,7 @@ export function applyTechnologyEffects(techId) {
 }
 
 /**
- * Updates the technologies UI
+ * Updates the technologies UI to reflect current state
  */
 export function updateTechnologiesUI() {
   const techModule = document.getElementById('technology-module');
@@ -429,14 +438,8 @@ export function updateTechnologiesUI() {
   lockedTechSection.appendChild(lockedTechList);
   moduleContent.appendChild(lockedTechSection);
   
-  // Add event listeners to category filters
-  document.querySelectorAll('.tech-category-filters button').forEach(button => {
-    button.addEventListener('click', () => {
-      document.querySelectorAll('.tech-category-filters button').forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-      updateTechnologiesUI();
-    });
-  });
+  // Initialize filter buttons
+  initTechnologyFilters();
   
   // Add event listeners to research buttons
   document.querySelectorAll('.research-button').forEach(button => {
@@ -462,7 +465,7 @@ export function showTechnologyModule(show = true) {
     techModule.classList.remove('mystery');
     techModule.innerHTML = `
       <div class="tech-header">
-        <h2 class="collapsible"><i data-lucide="microscope" class="icon-dark"></i> Technologies <i data-lucide="chevron-up" class="toggle-icon"></i></h2>
+        <h2 class="collapsible"><i data-lucide="microscope" class="icon-dark"></i> ${t('technologies')} <i data-lucide="chevron-up" class="toggle-icon"></i></h2>
       </div>
       <div class="module-content tech-content"></div>
     `;
@@ -471,12 +474,155 @@ export function showTechnologyModule(show = true) {
     techModule.classList.add('mystery');
     techModule.innerHTML = `
       <div class="mystery-content">
-        <div class="icon"><i data-lucide="circle-help" class="icon gutter-grey"></i></div>
-        <div class="title">Ancient Knowledge</div>
-        <div class="description">What secrets await those who seek to understand?</div>
+        <h2><i data-lucide="help-circle" class="icon-dark"></i> ${t('ancientKnowledge')}</h2>
+        <p>${t('ancientKnowledgeDesc')}</p>
       </div>
     `;
   }
-
+  
+  // Create Lucide icons
   createLucideIcons();
+}
+
+/**
+ * Filters technologies based on the selected category
+ * @param {string} category - The category to filter by
+ */
+export function filterTechnologies(category = 'all') {
+  // Update active button
+  document.querySelectorAll('.tech-category-filters button').forEach(btn => {
+    if (btn.dataset.category === category) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+
+  // Update header text based on selected category
+  const headerText = document.querySelector('.available-technologies-header h3');
+  if (headerText) {
+    if (category === 'all') {
+      headerText.textContent = 'AVAILABLE TECHNOLOGIES';
+    } else {
+      // Capitalize first letter of category
+      const categoryName = category.toUpperCase();
+      headerText.textContent = `${categoryName} TECHNOLOGIES`;
+    }
+  }
+
+  // Filter available technologies
+  const availableTechs = Object.values(TECHNOLOGIES).filter(tech => 
+    tech.unlocked && !tech.researched && 
+    (category === 'all' || tech.category === category)
+  );
+
+  // Update available technologies section
+  const availableTechSection = document.querySelector('.available-technologies .tech-list');
+  if (availableTechSection) {
+    availableTechSection.innerHTML = '';
+    
+    if (availableTechs.length === 0) {
+      availableTechSection.innerHTML = `<p class="no-techs">No available technologies</p>`;
+    } else {
+      availableTechs.forEach(tech => {
+        const techItem = document.createElement('div');
+        techItem.className = 'tech-item available';
+        
+        const canResearch = gameState.knowledgePoints >= tech.knowledgeCost && !gameState.activeResearch;
+        
+        techItem.innerHTML = `
+          <div class="tech-header">
+            <div class="tech-icon">
+              <i data-lucide="${tech.icon}" class="icon"></i>
+            </div>
+            <div class="tech-name">${tech.name.toUpperCase()}</div>
+            <div class="tech-status ${canResearch ? 'available' : ''}">AVAILABLE</div>
+          </div>
+          <div class="tech-content">
+            <div class="tech-effect">${tech.effect}</div>
+            <div class="tech-cost">
+              <span class="knowledge"><i data-lucide="book" class="icon magenta"></i> ${tech.knowledgeCost}</span>
+              <span class="time"><i data-lucide="clock" class="icon"></i> ${tech.researchTime} hours</span>
+            </div>
+            <button class="research-button" data-tech-id="${tech.id}" ${canResearch ? '' : 'disabled'}>
+              RESEARCH
+            </button>
+          </div>
+        `;
+        
+        availableTechSection.appendChild(techItem);
+      });
+    }
+  }
+
+  // Filter locked technologies
+  const lockedTechs = Object.values(TECHNOLOGIES).filter(tech => 
+    !tech.unlocked && !tech.researched && 
+    (category === 'all' || tech.category === category)
+  );
+
+  // Update locked technologies section
+  const lockedTechSection = document.querySelector('.locked-technologies .tech-list');
+  if (lockedTechSection) {
+    lockedTechSection.innerHTML = '';
+    
+    if (lockedTechs.length === 0) {
+      lockedTechSection.innerHTML = `<p class="no-techs">No locked technologies</p>`;
+    } else {
+      lockedTechs.forEach(tech => {
+        const techItem = document.createElement('div');
+        techItem.className = 'tech-item locked';
+        
+        techItem.innerHTML = `
+          <div class="tech-header">
+            <div class="tech-icon">
+              <i data-lucide="${tech.icon}" class="icon"></i>
+            </div>
+            <div class="tech-name">${tech.name.toUpperCase()}</div>
+            <div class="tech-status locked">LOCKED</div>
+          </div>
+          <div class="tech-content">
+            <div class="tech-effect">${tech.effect}</div>
+            <div class="tech-prerequisites">
+              Requires: ${tech.prerequisites.map(prereq => TECHNOLOGIES[prereq].name).join(', ')}
+            </div>
+          </div>
+        `;
+        
+        lockedTechSection.appendChild(techItem);
+      });
+    }
+  }
+
+  // Create Lucide icons
+  createLucideIcons();
+}
+
+/**
+ * Initialize technology filter buttons
+ */
+export function initTechnologyFilters() {
+  // Remove any existing event listeners by cloning and replacing the buttons
+  document.querySelectorAll('.tech-category-filters button').forEach(button => {
+    const newButton = button.cloneNode(true);
+    button.parentNode.replaceChild(newButton, button);
+  });
+
+  // Add our event listeners
+  document.querySelectorAll('.tech-category-filters button').forEach(button => {
+    button.addEventListener('click', (event) => {
+      // Prevent default behavior
+      event.stopPropagation();
+      
+      // Update active class
+      document.querySelectorAll('.tech-category-filters button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      button.classList.add('active');
+      
+      // Filter technologies
+      const category = button.dataset.category;
+      filterTechnologies(category);
+    });
+  });
 } 

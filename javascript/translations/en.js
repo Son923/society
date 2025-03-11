@@ -87,50 +87,41 @@ export const en = {
   
   // Technologies
   technologies: "Technologies",
-  availableTechnologies: "Available Technologies",
-  lockedTechnologies: "Locked Technologies",
-  research: "Research",
-  available: "Available",
-  locked: "Locked",
-  inProgress: "In Progress",
-  timeRemaining: "Time Remaining",
-  hours: "hours",
-  noAvailableTechnologies: "No available technologies",
-  noLockedTechnologies: "No locked technologies",
-  
-  // Technology categories
   all: "All",
   survival: "Survival",
   farming: "Farming",
   building: "Building",
   medicine: "Medicine",
-  
-  // Specific technologies
-  improvedTools: "Improved Tools",
-  advancedFarming: "Advanced Farming Techniques",
-  waterPurification: "Water Purification System",
-  betterConstruction: "Better Construction",
-  medicinalHerbs: "Medicinal Herbs",
-  
-  // Technology descriptions
-  improvedToolsDesc: "Increase resource gathering by 20%",
-  advancedFarmingDesc: "Increases crop yield by 50% and reduces growth time by 25%",
-  waterPurificationDesc: "Reduces water consumption by 20% for all activities",
-  betterConstructionDesc: "Buildings cost 25% less wood",
-  medicinalHerbsDesc: "Party members heal 5% health per day",
-  
-  // Technology requirements
+  availableTechnologies: "Available Technologies",
+  lockedTechnologies: "Locked Technologies",
+  research: "Research",
+  inProgress: "In Progress",
+  available: "Available",
+  locked: "Locked",
   requires: "Requires",
+  timeRemaining: "Time remaining",
+  hours: "hours",
+  noAvailableTechnologies: "No available technologies",
+  noLockedTechnologies: "No locked technologies",
+  researchCompleted: "Research complete: {technology}",
+  
+  // Technology names and descriptions
+  improvedTools: "Improved Tools",
+  improvedToolsDesc: "Increase resource gathering by 20%",
+  advancedFarming: "Advanced Farming",
+  advancedFarmingDesc: "50% more food from crops",
+  waterPurification: "Water Purification",
+  waterPurificationDesc: "20% less water consumption",
+  betterConstruction: "Better Construction",
+  betterConstructionDesc: "Buildings cost 25% less wood",
+  medicinalHerbs: "Medicinal Herbs",
+  medicinalHerbsDesc: "Party members heal 5% health per day",
   
   // Upgrades
   farming: "Farming",
   farmingDesc: "Allows you to grow your own food",
   well: "Well",
   wellDesc: "Generates water over time",
-  advancedFarming: "Advanced Farming Techniques",
-  advancedFarmingDesc: "Increases crop yield by 50% and reduces growth time by 25%",
-  waterPurification: "Water Purification System",
-  waterPurificationDesc: "Reduces water consumption by 20% for all activities",
   toolWorkshop: "Tool Workshop",
   toolWorkshopDesc: "Increases resource gathering efficiency by 25% (more resources per action)",
   medicalTent: "Medical Tent",
