@@ -150,6 +150,11 @@ export const en = {
   woodGatheringDroneDesc: "Automatically gathers small amounts of wood over time",
   specializations: "Specialization Training",
   specializationsDesc: "Allows party members to specialize in different roles for unique bonuses",
+  builderDiscount: "Builder discount applied",
+  unlockedUpgrade: "Unlocked upgrade",
+  cannotAffordUpgrade: "Cannot afford upgrade",
+  newUpgradeAvailable: "New upgrade available",
+  saved: "saved",
   
   // Random events
   randomEvent: "Random Event",
