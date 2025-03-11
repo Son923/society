@@ -221,25 +221,46 @@
 
     .stats-container {
       padding: 0.5em;
+      overflow: hidden;
     }
 
     .stats {
       width: 100%;
+      table-layout: fixed;
       border-collapse: collapse;
       text-transform: uppercase;
-      font-size: 0.7em;
+      font-size: 0.65em;
+
+      tr {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.3em;
+      }
 
       td {
-        padding: 0 0.5em;
+        padding: 0 0.3em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      td:first-child {
+        width: 100px;
+        min-width: 100px;
+        flex: 0 0 100px;
       }
 
       td:nth-child(2) {
-        width: 100%;
+        flex: 1;
+        padding: 0 0.3em;
       }
 
       td:nth-child(3) {
         text-align: right;
         white-space: nowrap;
+        width: 45px;
+        min-width: 45px;
+        flex: 0 0 45px;
       }
 
       .progress-bar {
@@ -321,29 +342,36 @@
 
     @media (max-width: 100ch) {
       .person {
-        flex: 1 1 100%;
-        min-width: 100%;
-        max-width: 100%;
-        border-right: 0;
-        border-top: var(--border-thickness) solid var(--text-color);
-        border-bottom: var(--border-thickness) solid var(--text-color);
+        flex: 1 1 50%;
+        min-width: 50%;
+        max-width: 50%;
+        border-right: var(--border-thickness) solid var(--text-color);
+
+        &:nth-child(3n) {
+          border-right: var(--border-thickness) solid var(--text-color);
+        }
+
+        &:nth-child(2n) {
+          border-right: 0;
+        }
+
+        &:nth-last-child(-n+3) {
+          border-bottom: var(--border-thickness) solid var(--text-color);
+        }
+
+        &:nth-last-child(-n+2) {
+          border-bottom: 0;
+        }
       }
 
-      .person:nth-child(3n) {
-        border-right: 0;
+      .stats {
+        font-size: 0.6em;
       }
 
-      .person:first-child {
-        border-top: 0;
-      }
-
-      .person:last-child {
-        border-bottom: 0;
-      }
-
-      .specialization-buttons {
-        flex-direction: row;
-        flex-wrap: wrap;
+      .stats td:first-child {
+        width: 80px;
+        min-width: 80px;
+        flex: 0 0 80px;
       }
     }
   }
