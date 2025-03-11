@@ -10,7 +10,7 @@ export const languages = {
 };
 
 // Default language
-let currentLanguage = 'en';
+let currentLanguage = 'vi';
 
 // Try to load language preference from localStorage
 try {

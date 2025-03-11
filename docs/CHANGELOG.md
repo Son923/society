@@ -19,6 +19,7 @@ All notable changes to Society Fail will be documented in this file.
 - English translations for party member status indicators and farming content
 
 ### Changed
+- Changed default language from English to Vietnamese
 - Updated `party.js` to use translation function for status indicators
 - Updated `farming.js` to use translation function for all farming-related text
 - Updated documentation in `TRANSLATIONS.md` to reflect recent translation additions 

@@ -1,7 +1,7 @@
 # Translation Guide for Society Game
 
 ## Overview
-This document explains how to update and manage translations for the Society game. The game currently supports English (en) and Vietnamese (vi) languages.
+This document explains how to update and manage translations for the Society game. The game currently supports English (en) and Vietnamese (vi) languages, with Vietnamese set as the default language.
 
 ## Translation File Structure
 The translation files are located in the `javascript/translations` directory:
