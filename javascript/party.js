@@ -262,7 +262,7 @@ export function updatePartyDisplay() {
     personElement.innerHTML = `
       <div class="person-header">
         <h3><i data-lucide="person-standing" class="icon-gutter-grey"></i> ${person.name}</h3>
-        <div class="busy-label ${person.isDead ? 'dead' : (isBusy ? 'busy' : (isResting ? 'resting' : 'idle'))}">${person.isDead ? t('dead') : (isBusy ? `${t('busy')} [${busyTimeLeft}h]` : (isResting ? t('resting') : t('idle')))}</div>
+        <div class="busy-label ${person.isDead ? 'dead' : (isBusy ? 'busy' : (isResting ? 'resting' : 'idle'))}">${person.isDead ? 'DEAD' : (isBusy ? `BUSY [${busyTimeLeft}h]` : (isResting ? 'RESTING' : t('idle')))}</div>
       </div>
       ${hasSpecializationsUpgrade ? `
       <div class="specialization">
@@ -270,14 +270,14 @@ export function updatePartyDisplay() {
           <div class="specialization-left">
             <i data-lucide="${specializationInfo ? specializationTypes[person.specialization].icon : 'briefcase'}" class="icon specialization-icon"></i>
             <select data-person="${index}" class="specialization-dropdown" ${person.isDead || isBusy || isResting ? 'disabled' : ''}>
-              <option value="">${t('selectSpecialization')}</option>
+              <option value="">Select Specialization</option>
               ${Object.values(specializationTypes).map(spec => `
-                <option value="${spec.id}" ${person.specialization === spec.id ? 'selected' : ''}>${t(spec.nameKey)}</option>
+                <option value="${spec.id}" ${person.specialization === spec.id ? 'selected' : ''}>${spec.name}</option>
               `).join('')}
             </select>
           </div>
           <div class="specialization-description">
-            ${specializationInfo ? t(specializationInfo.descriptionKey) : t('chooseRole')}
+            ${specializationInfo ? specializationInfo.description : 'Choose a role for this party member'}
           </div>
         </div>
       </div>
@@ -371,7 +371,7 @@ export function setPartyMemberSpecialization(personIndex, specializationType) {
   // If specializationType is empty, clear the specialization
   if (!specializationType) {
     person.specialization = null;
-    addLogEntry(`${person.name} ${t('noLongerHasSpecialization')}`, 'info');
+    addLogEntry(`${person.name} no longer has a specialization.`, 'info');
     updatePartyDisplay();
     updateGameState();
     return;
@@ -400,31 +400,36 @@ export function performAction(personIndex, action) {
     return;
   }
 
-  switch (action) {
-    case 'eat':
+  const actions = {
+    eat: () => {
       if (gameState.food >= 5) {
+        person.hunger = Math.min(100, person.hunger + 25);
         gameState.food -= 5;
-        person.hunger = Math.min(100, person.hunger + 30);
-        addLogEntry(t('ateFood').replace('{0}', person.name), 'action');
+        gameState.busyUntil[personIndex] = currentTime + 1;
+        addLogEntry(`${person.name} ${t('eat').toLowerCase()} some ${t('food').toLowerCase()}.`, 'info');
       }
-      break;
-    case 'drink':
+    },
+    drink: () => {
       if (gameState.water >= 3) {
-        gameState.water -= 3;
         person.thirst = Math.min(100, person.thirst + 25);
-        addLogEntry(t('drankWater').replace('{0}', person.name), 'action');
+        gameState.water -= 3;
+        gameState.busyUntil[personIndex] = currentTime + 1;
+        addLogEntry(`${person.name} ${t('drink').toLowerCase()} some ${t('water').toLowerCase()}.`, 'info');
       }
-      break;
-    case 'sleep':
-      gameState.busyUntil[personIndex] = -1; // Special value for resting
-      addLogEntry(t('startedResting').replace('{0}', person.name), 'action');
-      break;
-    default:
-      console.log("Unknown action:", action);
-  }
+    },
+    sleep: () => {
+      gameState.busyUntil[personIndex] = -1;
+      addLogEntry(`${person.name} started ${t('rest').toLowerCase()}.`, 'info');
+    }
+  };
 
-  updatePartyDisplay();
-  updateGameState();
+  if (action in actions) {
+    actions[action]();
+    updatePartyDisplay();
+    updateGameState();
+  } else {
+    console.log(`Unknown action: ${action}`);
+  }
 }
 
 /**

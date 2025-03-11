@@ -8,7 +8,7 @@ export const vi = {
   easy: "Dễ",
   medium: "Trung bình",
   hard: "Khó",
-  noResources: "Không có tài nguyên",
+  noResources: "Không tài nguyên",
   
   // Resources
   food: "Thức ăn",
@@ -74,9 +74,6 @@ export const vi = {
   thirst: "Khát",
   energy: "Năng lượng",
   idle: "Nhàn rỗi",
-  busy: "BẬN",
-  resting: "ĐANG NGHỈ",
-  dead: "ĐÃ CHẾT",
   
   // Actions
   eat: "Ăn",
@@ -143,79 +140,5 @@ export const vi = {
   contentmentIncreased: "Sự hài lòng tăng lên",
   
   // Tips
-  sustainabilityTip: "Khi bạn tiến bộ, hãy nghĩ về tính bền vững lâu dài. Đầu tư vào nâng cấp mang lại lợi ích thụ động.",
-  
-  // Whispers
-  whisper: "Những Lời Thì Thầm",
-  whisper1: "Bóng tối ngày càng dài hơn...",
-  whisper2: "Chúng đang theo dõi...",
-  whisper3: "Mặt đất đang đói khát...",
-  whisper4: "Không khí mang theo những lời thì thầm của những cái tên đã bị lãng quên...",
-  whisper5: "Những cây cối còn nhớ...",
-  whisper6: "Nước phản chiếu những khuôn mặt không có ở đó...",
-  whisper7: "Thời gian đang cạn dần...",
-  whisper8: "Những kẻ già cỗi đang trở mình trong giấc ngủ...",
-  whisper9: "Mặt trăng khóc ra máu...",
-  whisper10: "Những nghi lễ bị lãng quên khao khát được thực hiện...",
-  whisper11: "Gió mang theo mùi hương của sự hủy hoại...",
-  whisper12: "Bóng tối nhảy múa không cần ánh sáng...",
-  whisper13: "Trái đất rung chuyển với sự mong đợi...",
-  whisper14: "Những lời thì thầm của sự điên loạn ngày càng lớn hơn...",
-  whisper15: "Bức màn giữa các thế giới mỏng đi...",
-  whisper16: "Những biểu tượng cổ xưa xuất hiện trong bụi...",
-  whisper17: "Sự im lặng gào thét...",
-  whisper18: "Thời gian chảy ngược...",
-  whisper19: "Thực tại uốn cong và vặn vẹo...",
-  whisper20: "Vực thẳm nhìn lại...",
-  
-  // Random events
-  rainstormEvent: "Một cơn mưa bất ngờ đã bổ sung nguồn nước của bạn! (+50 💧)",
-  wildAnimalAttack: "Một con thú hoang đã tấn công trại của bạn! {0} đã bị thương.",
-  foodSpoilage: "Một số thức ăn của bạn đã bị hỏng do bảo quản không đúng cách.",
-  unexpectedVisitors: "Những vị khách không mời đã chia sẻ một số vật tư của họ với bạn!",
-  toolBreakage: "Một trong những công cụ của bạn đã bị hỏng trong quá trình sử dụng. Hiệu quả thu thập giảm.",
-  medicinalHerbsFound: "Bạn đã tìm thấy một số thảo dược y tế trong khi đi kiếm ăn!",
-  sicknessSpreads: "{0} đã bị ốm. Họ sẽ cần nghỉ ngơi và thuốc men.",
-  
-  // Specializations
-  specializations: "Chuyên môn hóa",
-  selectSpecialization: "Chọn Chuyên môn",
-  chooseRole: "Chọn vai trò cho thành viên nhóm này",
-  noLongerHasSpecialization: "không còn có chuyên môn.",
-  
-  // Specialization types
-  gatherer: "Người Thu thập",
-  gathererDesc: "Thu thập tài nguyên nhiều hơn 25% từ các hành động thu thập",
-  builder: "Thợ Xây dựng",
-  builderDesc: "Giảm 20% chi phí gỗ cho các công trình",
-  researcher: "Nhà Nghiên cứu",
-  researcherDesc: "Tạo ra 0.5 điểm kiến thức mỗi giờ",
-  fighter: "Chiến binh",
-  fighterDesc: "Hiệu quả hơn 25% trong chiến đấu",
-  medic: "Y tá",
-  medicDesc: "Thuốc hiệu quả hơn 30% và +2 hồi phục sức khỏe mỗi ngày",
-  
-  // Game over
-  gameOver: "Trò Chơi Kết Thúc",
-  survivalDays: "Bạn đã sống sót được {0} ngày",
-  tryAgain: "Thử Lại",
-  everyoneHasDied: "Mọi người đã chết.",
-  noAchievements: "Không có thành tựu nào được mở khóa",
-  resources: "Tài nguyên",
-  
-  // Action messages
-  ateFood: "{0} đã ăn một ít thức ăn.",
-  drankWater: "{0} đã uống một ít nước.",
-  startedResting: "{0} đã bắt đầu nghỉ ngơi.",
-  
-  // Time indicators
-  timeLeft: "{0} giờ",
-  
-  // Misc
-  loading: "Đang tải...",
-  saving: "Đang lưu...",
-  selectAll: "Chọn Tất cả",
-  clearAll: "Xóa Tất cả",
-  confirm: "Xác nhận",
-  cancel: "Hủy bỏ"
+  sustainabilityTip: "Khi bạn tiến bộ, hãy nghĩ về tính bền vững lâu dài. Đầu tư vào nâng cấp mang lại lợi ích thụ động."
 }; 
