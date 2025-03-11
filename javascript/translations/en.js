@@ -104,6 +104,9 @@ export const en = {
   noAvailableTechnologies: "No available technologies",
   noLockedTechnologies: "No locked technologies",
   researchCompleted: "Research complete: {technology}",
+  cannotStartResearch: "Cannot start research on {technology}. Another research is already in progress.",
+  notEnoughKnowledge: "Not enough knowledge points to research {technology}.",
+  startedResearch: "Started research on {technology}.",
   
   // Technology names and descriptions
   improvedTools: "Improved Tools",

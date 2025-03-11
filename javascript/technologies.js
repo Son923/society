@@ -18,10 +18,10 @@ import { t } from './translations/index.js';
 export const TECHNOLOGIES = {
   improvedTools: {
     id: "improvedTools",
-    name: "Improved Tools",
+    get name() { return t("improvedTools"); },
     knowledgeCost: 10,
     researchTime: 4, // hours
-    effect: "Increase resource gathering by 20%",
+    get effect() { return t("improvedToolsDesc"); },
     prerequisites: [],
     unlocked: false,
     researched: false,
@@ -30,10 +30,10 @@ export const TECHNOLOGIES = {
   },
   advancedFarming: {
     id: "advancedFarming",
-    name: "Advanced Farming",
+    get name() { return t("advancedFarming"); },
     knowledgeCost: 25,
     researchTime: 8,
-    effect: "50% more food from crops",
+    get effect() { return t("advancedFarmingDesc"); },
     prerequisites: ["improvedTools"],
     unlocked: false,
     researched: false,
@@ -42,10 +42,10 @@ export const TECHNOLOGIES = {
   },
   waterPurification: {
     id: "waterPurification",
-    name: "Water Purification",
+    get name() { return t("waterPurification"); },
     knowledgeCost: 25,
     researchTime: 8,
-    effect: "20% less water consumption",
+    get effect() { return t("waterPurificationDesc"); },
     prerequisites: ["improvedTools"],
     unlocked: false,
     researched: false,
@@ -54,10 +54,10 @@ export const TECHNOLOGIES = {
   },
   betterConstruction: {
     id: "betterConstruction",
-    name: "Better Construction",
+    get name() { return t("betterConstruction"); },
     knowledgeCost: 30,
     researchTime: 12,
-    effect: "Buildings cost 25% less wood",
+    get effect() { return t("betterConstructionDesc"); },
     prerequisites: ["improvedTools"],
     unlocked: false,
     researched: false,
@@ -66,10 +66,10 @@ export const TECHNOLOGIES = {
   },
   medicinalHerbs: {
     id: "medicinalHerbs",
-    name: "Medicinal Herbs",
+    get name() { return t("medicinalHerbs"); },
     knowledgeCost: 40,
     researchTime: 16,
-    effect: "Party members heal 5% health per day",
+    get effect() { return t("medicinalHerbsDesc"); },
     prerequisites: ["advancedFarming"],
     unlocked: false,
     researched: false,
@@ -116,13 +116,13 @@ export function startResearch(techId) {
 
   // Check if another research is already in progress
   if (gameState.activeResearch) {
-    addLogEntry(`Cannot start research on ${tech.name}. Another research is already in progress.`, 'error');
+    addLogEntry(t('cannotStartResearch', { technology: tech.name }), 'error');
     return;
   }
 
   // Check if the player can afford the knowledge cost
   if (gameState.knowledgePoints < tech.knowledgeCost) {
-    addLogEntry(`Not enough knowledge points to research ${tech.name}.`, 'error');
+    addLogEntry(t('notEnoughKnowledge', { technology: tech.name }), 'error');
     return;
   }
 
@@ -140,11 +140,12 @@ export function startResearch(techId) {
   // Set as active research
   gameState.activeResearch = {
     id: techId,
+    progress: 0,
     startTime: gameState.day * 24 + gameState.hour,
     totalTime: tech.researchTime
   };
 
-  addLogEntry(`Started research on ${tech.name}.`, 'success');
+  addLogEntry(t('startedResearch', { technology: tech.name }), 'success');
   updateGameState();
   updateTechnologiesUI();
   saveGameState();

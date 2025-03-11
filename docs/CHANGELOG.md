@@ -22,10 +22,13 @@ All notable changes to Society Fail will be documented in this file.
   - Technology categories (Survival, Farming, Building, Medicine)
   - Research status messages
   - Research completion message
+  - Research error messages
 
 ### Changed
 - Changed default language from English to Vietnamese
 - Updated `party.js` to use translation function for status indicators
 - Updated `farming.js` to use translation function for all farming-related text
 - Updated `technologies.js` to use translation function for all technology-related text
+  - Modified TECHNOLOGIES object to use getters for dynamic translation
+  - Updated research functions to use translated messages
 - Updated documentation in `TRANSLATIONS.md` to reflect recent translation additions 
