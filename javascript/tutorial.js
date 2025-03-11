@@ -152,6 +152,18 @@ export function initializeTutorials() {
     gameState.lastLowResourceWarning = 0;
   }
   shownTutorials = new Set();
+  
+  // Listen for language change events
+  document.addEventListener('languageChanged', () => {
+    // If there's an active tutorial message, update it
+    const tutorialContainer = document.getElementById('tutorial-container');
+    if (tutorialContainer && tutorialContainer.style.display !== 'none') {
+      const currentMessage = tutorialContainer.querySelector('.tutorial-message').dataset.key;
+      if (currentMessage) {
+        tutorialContainer.querySelector('.tutorial-message').textContent = t(currentMessage);
+      }
+    }
+  });
 }
 
 export function saveTutorialState() {

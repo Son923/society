@@ -5,7 +5,7 @@
 */
 
 import { createLucideIcons, initializeCollapsibles } from './utils.js';
-import { addLogEntry, clearLog, updateLogUI } from './log.js';
+import { addLogEntry, clearLog, updateLogUI, initializeLog } from './log.js';
 import { startTime, togglePause as toggleTimePause, resetTime, stopTime, updateTimeDisplay } from './time.js';
 import { saveGameState, loadGameState, clearGameState } from './storage.js';
 import { gameState, UPGRADES, resetGameState, STARTING_RESOURCES } from './settings.js';
@@ -21,7 +21,7 @@ import { initializeAchievements, checkAchievements, ACHIEVEMENTS, updateAchievem
 import { initializeWatchtower, checkRescueMission, updateWatchtowerUI } from './watchtower.js';
 import { checkForRandomEvent, initializeRandomEvents } from './randomevents.js';
 import { checkTutorials, initializeTutorials, saveTutorialState } from './tutorial.js';
-import { runAutomations } from './automation.js';
+import { runAutomations, initializeAutomation } from './automation.js';
 import { applyMedicalTentEffects } from './medicaltent.js';
 import { initializeContentment, checkContentmentEffects, updateContentmentDisplay, getContentmentEffects } from './contentment.js';
 import { getKnowledgeGeneration } from './specializations.js';
@@ -79,6 +79,11 @@ export function initializeGame() {
   setupGameControls();
   setupPartyActions();
   setupActionListeners();
+  initializeLog();
+  initializeAutomation();
+  initializeRandomEvents();
+  initializeTutorials();
+  initializeContentment();
 
   const loadedState = loadGame();
   if (loadedState === 'incompatible') {
@@ -109,9 +114,6 @@ export function initializeGame() {
   initializeUnlockedModules();
   initializeCollapsibles();
   initializeWatchtower();
-  initializeRandomEvents();
-  initializeTutorials();
-  initializeContentment();
 
   // Check for debug mode
   if (window.location.hash === '#debug') {

@@ -73,6 +73,11 @@ export function initializeAchievements() {
     gameState.achievements[achievement.id] = gameState.achievements[achievement.id] || false;
   });
   updateAchievementsUI();
+  
+  // Listen for language change events
+  document.addEventListener('languageChanged', () => {
+    updateAchievementsUI();
+  });
 }
 
 /**

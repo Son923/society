@@ -414,4 +414,10 @@ export function initializeRandomEvents() {
     const currentTime = gameState.hour + (gameState.day - 1) * 24;
     gameState.nextEventTime = currentTime + Math.floor(Math.random() * 12); // First event within 12 hours
   }
+  
+  // Listen for language change events
+  document.addEventListener('languageChanged', () => {
+    // Random events don't have a persistent UI to update
+    // But we can update any displayed event messages if needed in the future
+  });
 }

@@ -31,4 +31,22 @@ All notable changes to Society Fail will be documented in this file.
 - Updated `technologies.js` to use translation function for all technology-related text
   - Modified TECHNOLOGIES object to use getters for dynamic translation
   - Updated research functions to use translated messages
-- Updated documentation in `TRANSLATIONS.md` to reflect recent translation additions 
+- Updated documentation in `TRANSLATIONS.md` to reflect recent translation additions
+
+### Fixed
+- Fixed issue where UI didn't update immediately when changing language
+  - Added language change event listeners to all major modules:
+    - Technologies
+    - Farming
+    - Party
+    - Random Events
+    - Upgrades
+    - Achievements
+    - Tutorial
+    - Contentment
+    - Log
+    - Automation
+  - Created initialization functions for modules that didn't have them:
+    - `initializeLog()`
+    - `initializeAutomation()`
+  - Updated `initializeGame()` to call all initialization functions 

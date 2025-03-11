@@ -3,6 +3,19 @@ import { addLogEntry } from './log.js';
 import { performAction, isBusy } from './party.js';
 import { t } from './translations/index.js';
 
+/**
+ * Initializes the automation system and sets up event listeners.
+ */
+export function initializeAutomation() {
+  gameState.automations = gameState.automations || {};
+  
+  // Listen for language change events
+  document.addEventListener('languageChanged', () => {
+    // Automation doesn't have a persistent UI to update
+    // But we can update any displayed automation messages if needed in the future
+  });
+}
+
 export function initializeAutomatedFeeding() {
   gameState.automations = gameState.automations || {};
   gameState.automations.feeding = true;

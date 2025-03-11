@@ -65,6 +65,11 @@ export function initializeContentment() {
 
   // Initialize the UI
   updateContentmentDisplay();
+  
+  // Listen for language change events
+  document.addEventListener('languageChanged', () => {
+    updateContentmentDisplay();
+  });
 }
 
 /**

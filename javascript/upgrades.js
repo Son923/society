@@ -322,6 +322,11 @@ export function initializeUpgrades() {
   }
 
   updateUpgradesUI();
+  
+  // Listen for language change events
+  document.addEventListener('languageChanged', () => {
+    updateUpgradesUI();
+  });
 }
 
 function checkPrerequisites(purchasedUpgradeId) {

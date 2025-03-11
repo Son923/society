@@ -9,6 +9,19 @@ import { t } from './translations/index.js';
 const MAX_LOG_ENTRIES = 100;
 
 /**
+ * Initializes the log module.
+ */
+export function initializeLog() {
+  // Initialize logEntries if it doesn't exist
+  gameState.logEntries = gameState.logEntries || [];
+  
+  // Listen for language change events
+  document.addEventListener('languageChanged', () => {
+    updateLogUI();
+  });
+}
+
+/**
  * Adds a new log entry to the game state and updates the UI.
  * @param {string} message - The message to be logged or translation key.
  * @param {string|object} typeOrParams - The type of log entry or parameters for translation.
