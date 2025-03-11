@@ -295,6 +295,9 @@ export function updateTechnologiesUI() {
 
   moduleContent.appendChild(filterContainer);
 
+  // Get selected category
+  const selectedCategory = document.querySelector('.tech-category-filters button.active')?.dataset.category || 'all';
+  
   // Add active research section if there is one
   if (gameState.activeResearch) {
     const activeResearchId = gameState.activeResearch.id;
@@ -307,26 +310,31 @@ export function updateTechnologiesUI() {
     
     activeResearchSection.innerHTML = `
       <h3>${t('research')} ${t('inProgress')}</h3>
-      <div class="research-item">
-        <div class="research-icon">
-          <i data-lucide="${activeTech.icon}" class="icon"></i>
+      <div class="tech-item active">
+        <div class="tech-header">
+          <div class="tech-icon">
+            <i data-lucide="${activeTech.icon}" class="icon"></i>
+          </div>
+          <div class="tech-name">${t(activeTech.id)}</div>
+          <div class="tech-status active">${t('inProgress')}</div>
         </div>
-        <div class="research-details">
-          <div class="research-name">${t(activeTech.id) || activeTech.name}</div>
-          <div class="research-progress">
+        <div class="tech-content">
+          <div class="tech-effect">${t(activeTech.id + 'Desc')}</div>
+          <div class="tech-progress">
             <div class="progress-bar">
               <div class="progress" style="width: ${progressPercent}%"></div>
             </div>
-            <span>${progressPercent}%</span>
+            <div class="progress-text">
+              ${progressPercent}% - ${t('timeRemaining')}: ${Math.ceil(activeTech.researchTime - gameState.activeResearch.progress)} ${t('hours')}
+            </div>
           </div>
-          <div class="research-time">${t('timeRemaining')}: ${Math.ceil(activeTech.researchTime - gameState.activeResearch.progress)} ${t('hours')}</div>
         </div>
       </div>
     `;
     
     moduleContent.appendChild(activeResearchSection);
   }
-
+  
   // Create available technologies section
   const availableTechSection = document.createElement('div');
   availableTechSection.className = 'available-technologies';
@@ -336,9 +344,6 @@ export function updateTechnologiesUI() {
   availableTechList.className = 'tech-list';
   
   // Filter technologies by selected category
-  const selectedCategory = document.querySelector('.tech-category-filters button.active')?.dataset.category || 'all';
-  
-  // Get available technologies
   const availableTechs = Object.values(TECHNOLOGIES).filter(tech => 
     tech.unlocked && !tech.researched && 
     (selectedCategory === 'all' || tech.category === selectedCategory)
@@ -349,26 +354,28 @@ export function updateTechnologiesUI() {
   } else {
     availableTechs.forEach(tech => {
       const techItem = document.createElement('div');
-      techItem.className = 'tech-item';
-      techItem.dataset.techId = tech.id;
+      techItem.className = 'tech-item available';
       
-      const canResearch = gameState.knowledge >= tech.knowledgeCost && !gameState.activeResearch;
+      const canResearch = gameState.knowledgePoints >= tech.knowledgeCost && !gameState.activeResearch;
       
       techItem.innerHTML = `
-        <div class="tech-icon">
-          <i data-lucide="${tech.icon}" class="icon ${canResearch ? '' : 'disabled'}"></i>
-        </div>
-        <div class="tech-details">
-          <div class="tech-name">${t(tech.id) || tech.name}</div>
-          <div class="tech-effect">${t(tech.id + 'Desc') || tech.effect}</div>
-          <div class="tech-cost">
-            <span>${t('requires')}: ${tech.knowledgeCost} <i data-lucide="book" class="icon magenta"></i></span>
-            <span>${tech.researchTime} ${t('hours')}</span>
+        <div class="tech-header">
+          <div class="tech-icon">
+            <i data-lucide="${tech.icon}" class="icon"></i>
           </div>
+          <div class="tech-name">${t(tech.id)}</div>
+          <div class="tech-status ${canResearch ? 'available' : ''}">${t('available')}</div>
         </div>
-        <button class="research-button" data-tech-id="${tech.id}" ${canResearch ? '' : 'disabled'}>
-          ${t('research')}
-        </button>
+        <div class="tech-content">
+          <div class="tech-effect">${t(tech.id + 'Desc')}</div>
+          <div class="tech-cost">
+            <span class="knowledge"><i data-lucide="book" class="icon magenta"></i> ${tech.knowledgeCost}</span>
+            <span class="time"><i data-lucide="clock" class="icon"></i> ${tech.researchTime} ${t('hours')}</span>
+          </div>
+          <button class="research-button" data-tech-id="${tech.id}" ${canResearch ? '' : 'disabled'}>
+            ${t('research')}
+          </button>
+        </div>
       `;
       
       availableTechList.appendChild(techItem);
@@ -400,18 +407,18 @@ export function updateTechnologiesUI() {
       techItem.className = 'tech-item locked';
       
       techItem.innerHTML = `
-        <div class="tech-icon">
-          <i data-lucide="${tech.icon}" class="icon disabled"></i>
-        </div>
-        <div class="tech-details">
-          <div class="tech-name">${t(tech.id) || tech.name}</div>
-          <div class="tech-effect">${t(tech.id + 'Desc') || tech.effect}</div>
-          <div class="tech-requirements">
-            <span>${t('requires')}: ${t('improvedTools')}</span>
+        <div class="tech-header">
+          <div class="tech-icon">
+            <i data-lucide="${tech.icon}" class="icon"></i>
           </div>
+          <div class="tech-name">${t(tech.id)}</div>
+          <div class="tech-status locked">${t('locked')}</div>
         </div>
-        <div class="locked-indicator">
-          <i data-lucide="lock" class="icon"></i>
+        <div class="tech-content">
+          <div class="tech-effect">${t(tech.id + 'Desc')}</div>
+          <div class="tech-prerequisites">
+            ${t('requires')}: ${tech.prerequisites.map(prereq => t(prereq)).join(', ')}
+          </div>
         </div>
       `;
       
