@@ -304,6 +304,30 @@ export function updatePartyDisplay() {
               `<img src="images/avatars/${person.avatarImage}" class="avatar-img ${person.isDead ? 'dead' : ''}" alt="${person.name}" />` : 
               `<i data-lucide="user" class="avatar-icon ${person.isDead ? 'dead' : ''}"></i>`
             }
+            <div class="profile-popup" data-person-index="${index}">
+              <div class="profile-popup-header">
+                <div class="profile-popup-name">${person.name}</div>
+                ${person.specialization ? `<div class="profile-popup-specialization">${specializationTypes[person.specialization].name}</div>` : ''}
+              </div>
+              <div class="profile-popup-traits">
+                <div class="profile-popup-trait">
+                  <div class="profile-popup-trait-name">${t('hungerRate')}</div>
+                  <div class="profile-popup-trait-value">${(person.traits.hungerRate).toFixed(2)} / ${t('hour')}</div>
+                </div>
+                <div class="profile-popup-trait">
+                  <div class="profile-popup-trait-name">${t('thirstRate')}</div>
+                  <div class="profile-popup-trait-value">${(person.traits.thirstRate).toFixed(2)} / ${t('hour')}</div>
+                </div>
+                <div class="profile-popup-trait">
+                  <div class="profile-popup-trait-name">${t('energyRate')}</div>
+                  <div class="profile-popup-trait-value">${(person.traits.energyRate).toFixed(2)} / ${t('hour')}</div>
+                </div>
+                <div class="profile-popup-trait">
+                  <div class="profile-popup-trait-name">${t('energyRecoveryRate')}</div>
+                  <div class="profile-popup-trait-value">${(person.traits.energyRecoveryRate).toFixed(2)} / ${t('hour')}</div>
+                </div>
+              </div>
+            </div>
           </div>
           <table class="stats">
             ${stats.map(stat => `
@@ -380,6 +404,47 @@ export function updatePartyDisplay() {
   if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
     lucide.createIcons();
   }
+  
+  // Xử lý sự kiện hover cho avatar để hiển thị popup profile
+  setupProfilePopups();
+}
+
+/**
+ * Thiết lập sự kiện hover cho avatar để hiển thị popup profile.
+ */
+function setupProfilePopups() {
+  const avatars = document.querySelectorAll('.avatar');
+  let hoverTimer;
+  
+  avatars.forEach(avatar => {
+    const popup = avatar.querySelector('.profile-popup');
+    if (!popup) return;
+    
+    // Sự kiện khi hover vào avatar
+    avatar.addEventListener('mouseenter', () => {
+      // Đặt timer để hiển thị popup sau 2 giây
+      hoverTimer = setTimeout(() => {
+        // Ẩn tất cả các popup khác
+        document.querySelectorAll('.profile-popup.visible').forEach(p => {
+          if (p !== popup) {
+            p.classList.remove('visible');
+          }
+        });
+        
+        // Hiển thị popup hiện tại
+        popup.classList.add('visible');
+      }, 2000); // 2 giây
+    });
+    
+    // Sự kiện khi rời khỏi avatar
+    avatar.addEventListener('mouseleave', () => {
+      // Hủy timer nếu rời khỏi trước 2 giây
+      clearTimeout(hoverTimer);
+      
+      // Ẩn popup
+      popup.classList.remove('visible');
+    });
+  });
 }
 
 /**

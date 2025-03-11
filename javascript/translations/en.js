@@ -384,4 +384,10 @@ export const en = {
   'Not enough water to plant {cropType}. Need {amount} water.': "Not enough water to plant {cropType}. Need {amount} water.",
   'Planted {cropType} (requires {hours} hours to grow)': "Planted {cropType} (requires {hours} hours to grow)",
   'Harvested {cropType}: +{amount} food': "Harvested {cropType}: +{amount} food",
+  
+  // Profile popup
+  'hungerRate': "Hunger Rate",
+  'thirstRate': "Thirst Rate",
+  'energyRate': "Energy Rate",
+  'energyRecoveryRate': "Energy Recovery",
 }; 

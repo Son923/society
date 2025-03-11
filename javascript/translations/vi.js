@@ -255,7 +255,7 @@ export const vi = {
   'Shadows dance without light...': "Bóng tối nhảy múa không cần ánh sáng...",
   'The earth trembles with anticipation...': "Trái đất rung chuyển với sự mong đợi...",
   'Whispers of madness grow louder...': "Tiếng thì thầm của sự điên loạn ngày càng lớn...",
-  'The veil between worlds thins...': "Bức màn giữa các thế giới mỏng dần...",
+  'The veil between worlds thins...': "Bức màn giữa các thế giới đang mỏng dần...",
   'Ancient symbols appear in the dust...': "Những biểu tượng cổ xưa xuất hiện trong bụi...",
   'The silence screams...': "Sự im lặng gào thét...",
   'Time flows backwards...': "Thời gian chảy ngược...",
@@ -392,4 +392,10 @@ export const vi = {
   'Not enough water to plant {cropType}. Need {amount} water.': "Không đủ nước để trồng {cropType}. Cần {amount} nước.",
   'Planted {cropType} (requires {hours} hours to grow)': "Đã trồng {cropType} (cần {hours} giờ để phát triển)",
   'Harvested {cropType}: +{amount} food': "Đã thu hoạch {cropType}: +{amount} thức ăn",
+  
+  // Profile popup
+  'hungerRate': "Tốc độ đói",
+  'thirstRate': "Tốc độ khát",
+  'energyRate': "Tốc độ mệt mỏi",
+  'energyRecoveryRate': "Tốc độ hồi phục",
 }; 
