@@ -30,6 +30,7 @@ export class PartyMember {
     this.thirst = 100;
     this.energy = 100;
     this.specialization = null;
+    this.avatarImage = this.assignRandomAvatar();
     this.traits = {
       hungerRate: Math.random() * 0.5 + 0.5,
       thirstRate: Math.random() * 0.75 + 0.75,
@@ -41,6 +42,16 @@ export class PartyMember {
 
   generateName() {
     return getUniqueRandomName(usedNames);
+  }
+
+  /**
+   * Assigns a random avatar image to the party member.
+   * @returns {string} The filename of the assigned avatar image.
+   */
+  assignRandomAvatar() {
+    const avatarCount = 10; // Total number of available avatars
+    const avatarIndex = Math.floor(Math.random() * avatarCount) + 1;
+    return `character${avatarIndex}.png`;
   }
 
   /**
@@ -289,7 +300,10 @@ export function updatePartyDisplay() {
       <div class="stats-container">
         <div class="avatar-stats-wrapper">
           <div class="avatar">
-            <i data-lucide="user" class="avatar-icon ${person.isDead ? 'dead' : ''}"></i>
+            ${person.avatarImage ? 
+              `<img src="images/avatars/${person.avatarImage}" class="avatar-img ${person.isDead ? 'dead' : ''}" alt="${person.name}" />` : 
+              `<i data-lucide="user" class="avatar-icon ${person.isDead ? 'dead' : ''}"></i>`
+            }
           </div>
           <table class="stats">
             ${stats.map(stat => `
