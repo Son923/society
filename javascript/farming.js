@@ -34,6 +34,11 @@ export function initializeFarming() {
     };
   }
   updateFarmingUI();
+  
+  // Listen for language change events
+  document.addEventListener('languageChanged', () => {
+    updateFarmingUI();
+  });
 }
 
 /**

@@ -170,6 +170,11 @@ export function initializeParty() {
     });
     window.dropdownListenerAdded = true;
   }
+  
+  // Listen for language change events
+  document.addEventListener('languageChanged', () => {
+    updatePartyDisplay();
+  });
 }
 
 /**

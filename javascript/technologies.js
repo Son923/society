@@ -98,8 +98,10 @@ export function initializeTechnologies() {
   // Update the UI
   updateTechnologiesUI();
   
-  // Initialize filter buttons if they exist in the DOM
-  initTechnologyFilters();
+  // Listen for language change events
+  document.addEventListener('languageChanged', () => {
+    updateTechnologiesUI();
+  });
 }
 
 /**
