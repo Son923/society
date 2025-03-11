@@ -26,6 +26,7 @@ import { applyMedicalTentEffects } from './medicaltent.js';
 import { initializeContentment, checkContentmentEffects, updateContentmentDisplay, getContentmentEffects } from './contentment.js';
 import { getKnowledgeGeneration } from './specializations.js';
 import { initializeTechnologies, updateResearchProgress, showTechnologyModule, updateTechnologiesUI } from './technologies.js';
+import { t } from './translations/index.js';
 
 // Debug mode flag
 let isDebugMode = false;
@@ -418,7 +419,7 @@ function handlePartyAction(event) {
 export function gameOver() {
   stopTime();
   showGameOverScreen();
-  addLogEntry('Game Over! Everyone has died.', 'error');
+  addLogEntry(t('gameOver') + '! ' + t('everyoneHasDied'), 'error');
 }
 
 function showGameOverScreen() {
@@ -439,16 +440,16 @@ function showGameOverScreen() {
       <div class="splash_header">
         <i data-lucide="skull" class="icon-large"></i>
         <div>
-          <h1>Society Failed</h1>
+          <h1>${t('gameOver')}</h1>
         </div>
       </div>
       <div id="game_stats">
         <h2>
-          <b>Time Survived</b>
-          <span class="time">${daysPlayed} days, ${hoursPlayed % 24} hours</span>
+          <b>${t('survivalDays').replace('{0}', daysPlayed)}</b>
+          <span class="time">${daysPlayed} ${t('day')}, ${hoursPlayed % 24} ${t('hour')}</span>
         </h2>
         <div class="numbers">
-          <p>Resources</p>
+          <p>${t('resources')}</p>
           <div class="resource-list">
             <div class="resource"><i data-lucide="beef" class="icon dark-yellow"></i><span>${Math.floor(gameState.totalResourcesGathered.food)}</span></div>
             <div class="resource"><i data-lucide="droplet" class="icon blue"></i><span>${Math.floor(gameState.totalResourcesGathered.water)}</span></div>
@@ -465,10 +466,10 @@ function showGameOverScreen() {
               </div>
             `).join('')}
           </div>
-          ${achievedAchievements.length === 0 ? '<p class="no-achievements">No achievements unlocked</p>' : ''}
+          ${achievedAchievements.length === 0 ? `<p class="no-achievements">${t('noAchievements')}</p>` : ''}
         </div>
       </div>
-      <button id="restart-game">Restart Game</button>
+      <button id="restart-game">${t('tryAgain')}</button>
     </div>
   `;
 
