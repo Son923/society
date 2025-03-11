@@ -61,7 +61,7 @@ export const en = {
   reset: "Reset",
   
   // Footer
-  footerText: "Society Fail is open source and made by @shpigford!",
+  footerText: "Society Fail is open source!",
   
   // Language selection
   language: "Language",

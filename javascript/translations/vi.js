@@ -61,7 +61,7 @@ export const vi = {
   reset: "Đặt lại",
   
   // Footer
-  footerText: "Society Fail là mã nguồn mở và được tạo bởi @shpigford!",
+  footerText: "Society Fail là game mã nguồn mở!",
   
   // Language selection
   language: "Ngôn ngữ",
