@@ -31,4 +31,5 @@ All notable changes to Society Fail will be documented in this file.
 - Updated `technologies.js` to use translation function for all technology-related text
   - Modified TECHNOLOGIES object to use getters for dynamic translation
   - Updated research functions to use translated messages
+- Updated `index.html` to use data-i18n attributes for technology module elements
 - Updated documentation in `TRANSLATIONS.md` to reflect recent translation additions 

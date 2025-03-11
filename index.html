@@ -149,11 +149,113 @@
       </div>
 
       <div id="secondary-modules">
-        <section id="technology-module" class="mystery">
-          <div class="mystery-content">
-            <div class="icon"><i data-lucide="circle-help" class="icon gutter-grey"></i></div>
-            <div class="title" data-i18n="ancientKnowledge">Ancient Knowledge</div>
-            <div class="description" data-i18n="ancientKnowledgeDesc">What secrets await those who seek to understand?</div>
+        <section id="technology-module" class="module mystery">
+          <div class="tech-header">
+            <h2 class="collapsible"><i data-lucide="microscope" class="icon-dark"></i> <span data-i18n="technologies">TECHNOLOGIES</span> <i data-lucide="chevron-up" class="toggle-icon"></i></h2>
+          </div>
+          <div class="module-content tech-content">
+            <div class="tech-category-filters">
+              <button data-category="all" class="active" data-i18n="all">ALL</button>
+              <button data-category="survival" data-i18n="survival">SURVIVAL</button>
+              <button data-category="farming" data-i18n="farming">FARMING</button>
+              <button data-category="building" data-i18n="building">BUILDING</button>
+              <button data-category="medicine" data-i18n="medicine">MEDICINE</button>
+            </div>
+            
+            <div class="available-technologies-header">
+              <h3 data-i18n="availableTechnologies">AVAILABLE TECHNOLOGIES</h3>
+            </div>
+            
+            <div class="available-technologies">
+              <div class="tech-list">
+                <div class="tech-item available">
+                  <div class="tech-header">
+                    <div class="tech-icon">
+                      <i data-lucide="hammer" class="icon"></i>
+                    </div>
+                    <div class="tech-name" data-i18n="improvedTools">Improved Tools</div>
+                    <div class="tech-status available" data-i18n="available">AVAILABLE</div>
+                  </div>
+                  <div class="tech-content">
+                    <div class="tech-effect" data-i18n="improvedToolsDesc">Increase resource gathering by 20%</div>
+                    <div class="tech-cost">
+                      <span class="knowledge"><i data-lucide="book" class="icon magenta"></i> 10</span>
+                      <span class="time"><i data-lucide="clock" class="icon"></i> 4 <span data-i18n="hours">hours</span></span>
+                    </div>
+                    <button class="research-button" data-tech-id="improvedTools" data-i18n="research">RESEARCH</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="locked-technologies">
+              <h3 data-i18n="lockedTechnologies">LOCKED TECHNOLOGIES</h3>
+              <div class="tech-list">
+                <div class="tech-item">
+                  <div class="tech-header">
+                    <div class="tech-icon">
+                      <i data-lucide="wheat" class="icon"></i>
+                    </div>
+                    <div class="tech-name">ADVANCED FARMING</div>
+                    <div class="tech-status locked">LOCKED</div>
+                  </div>
+                  <div class="tech-content">
+                    <div class="tech-effect">50% more food from crops</div>
+                    <div class="tech-prerequisites">
+                      Requires: Improved Tools
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="tech-item">
+                  <div class="tech-header">
+                    <div class="tech-icon">
+                      <i data-lucide="droplets" class="icon"></i>
+                    </div>
+                    <div class="tech-name">WATER PURIFICATION</div>
+                    <div class="tech-status locked">LOCKED</div>
+                  </div>
+                  <div class="tech-content">
+                    <div class="tech-effect">20% less water consumption</div>
+                    <div class="tech-prerequisites">
+                      Requires: Improved Tools
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="tech-item">
+                  <div class="tech-header">
+                    <div class="tech-icon">
+                      <i data-lucide="building" class="icon"></i>
+                    </div>
+                    <div class="tech-name">BETTER CONSTRUCTION</div>
+                    <div class="tech-status locked">LOCKED</div>
+                  </div>
+                  <div class="tech-content">
+                    <div class="tech-effect">Buildings cost 25% less wood</div>
+                    <div class="tech-prerequisites">
+                      Requires: Improved Tools
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="tech-item">
+                  <div class="tech-header">
+                    <div class="tech-icon">
+                      <i data-lucide="pill" class="icon"></i>
+                    </div>
+                    <div class="tech-name">MEDICINAL HERBS</div>
+                    <div class="tech-status locked">LOCKED</div>
+                  </div>
+                  <div class="tech-content">
+                    <div class="tech-effect">Party members heal 5% health per day</div>
+                    <div class="tech-prerequisites">
+                      Requires: Advanced Farming
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
         <section id="farming-module" class="mystery">
