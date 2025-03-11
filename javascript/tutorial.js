@@ -1,5 +1,6 @@
 import { gameState, UPGRADES } from './settings.js';
 import { addLogEntry } from './log.js';
+import { t } from './translations/index.js';
 
 const TUTORIAL_MESSAGES = [
   {
@@ -133,7 +134,8 @@ export function checkTutorials() {
   const currentTime = gameState.hour + (gameState.day - 1) * 24;
   TUTORIAL_MESSAGES.forEach(tutorial => {
     if (!shownTutorials.has(tutorial.id) && tutorial.trigger(gameState)) {
-      addLogEntry(tutorial.message, 'tutorial');
+      const translatedMessage = t(tutorial.message);
+      addLogEntry(translatedMessage, 'tutorial');
       shownTutorials.add(tutorial.id);
       if (tutorial.id === 'low_resources') {
         gameState.lastLowResourceWarning = currentTime;

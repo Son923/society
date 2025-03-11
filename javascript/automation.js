@@ -1,6 +1,7 @@
 import { gameState } from './settings.js';
 import { addLogEntry } from './log.js';
 import { performAction, isBusy } from './party.js';
+import { t } from './translations/index.js';
 
 export function initializeAutomatedFeeding() {
   gameState.automations = gameState.automations || {};
@@ -62,7 +63,7 @@ function automatedFeeding() {
   gameState.party.forEach((member, index) => {
     if (member.hunger <= 50 && gameState.food >= 5 && !isBusy(index, currentTime)) {
       performAction(index, 'eat');
-      addLogEntry(`Automated Feeding System fed ${member.name}`);
+      addLogEntry(t('Automated Feeding System fed {name}'), { name: member.name });
     }
   });
 }
@@ -72,7 +73,7 @@ function automatedWatering() {
   gameState.party.forEach((member, index) => {
     if (member.thirst <= 50 && gameState.water >= 3 && !isBusy(index, currentTime)) {
       performAction(index, 'drink');
-      addLogEntry(`Water Purification System provided water to ${member.name}`);
+      addLogEntry(t('Water Purification System provided water to {name}'), { name: member.name });
     }
   });
 }
@@ -82,7 +83,7 @@ function automatedResting() {
   gameState.party.forEach((member, index) => {
     if (member.energy <= 35 && !isBusy(index, currentTime)) {
       performAction(index, 'sleep');
-      addLogEntry(`Comfortable Sleeping Quarters initiated rest for ${member.name}`);
+      addLogEntry(t('Comfortable Sleeping Quarters initiated rest for {name}'), { name: member.name });
     }
   });
 }
@@ -93,6 +94,7 @@ function automatedFoodGathering(currentTime) {
     gameState.food += gatherAmount;
     gameState.totalResourcesGathered.food += gatherAmount;
     // addLogEntry(`Food Gathering Drone collected ${gatherAmount} food`);
+    addLogEntry(t('Food Gathering Drone collected {amount} food'), { amount: gatherAmount });
     gameState.automations.foodGathering.lastGathered = currentTime;
   }
 }
@@ -103,6 +105,7 @@ function automatedWaterGathering(currentTime) {
     gameState.water += gatherAmount;
     gameState.totalResourcesGathered.water += gatherAmount;
     // addLogEntry(`Water Gathering Drone collected ${gatherAmount} water`);
+    addLogEntry(t('Water Gathering Drone collected {amount} water'), { amount: gatherAmount });
     gameState.automations.waterGathering.lastGathered = currentTime;
   }
 }
@@ -113,6 +116,7 @@ function automatedWoodGathering(currentTime) {
     gameState.wood += gatherAmount;
     gameState.totalResourcesGathered.wood += gatherAmount;
     // addLogEntry(`Wood Gathering Drone collected ${gatherAmount} wood`);
+    addLogEntry(t('Wood Gathering Drone collected {amount} wood'), { amount: gatherAmount });
     gameState.automations.woodGathering.lastGathered = currentTime;
   }
 }

@@ -117,7 +117,7 @@ export class PartyMember {
       if (this.health <= 0) {
         this.isDead = true;
         this.health = 0;
-        addLogEntry(`${this.name} has died due to exhaustion.`, 'error');
+        addLogEntry(`${this.name} ${t('hasDiedDueToExhaustion')}`, 'error');
       }
     }
   }
@@ -239,30 +239,29 @@ function getProgressBarClass(value) {
  */
 export function updatePartyDisplay() {
   const partyContainer = document.getElementById('party-display');
+  if (!partyContainer) return;
+
   partyContainer.innerHTML = '';
 
-  // Add a flag to track if a dropdown is open
-  window.isSpecDropdownOpen = false;
+  const currentTime = gameState.hour + (gameState.day - 1) * 24;
+  const stats = ['health', 'hunger', 'thirst', 'energy'];
 
   gameState.party.forEach((person, index) => {
     const personElement = document.createElement('div');
     personElement.className = 'person';
-    const currentTime = gameState.hour + (gameState.day - 1) * 24;
+    if (person.isDead) personElement.classList.add('dead');
+
     const isBusy = gameState.busyUntil[index] > currentTime;
     const isResting = gameState.busyUntil[index] === -1;
     const busyTimeLeft = isBusy ? gameState.busyUntil[index] - currentTime : 0;
 
-    // Get specialization info if the person has one
-    const specializationInfo = person.specialization ?
-      specializationTypes[person.specialization] : null;
-
-    // Check if specializations upgrade has been purchased
     const hasSpecializationsUpgrade = gameState.upgrades.specializations;
+    const specializationInfo = person.specialization ? specializationTypes[person.specialization] : null;
 
     personElement.innerHTML = `
       <div class="person-header">
         <h3><i data-lucide="person-standing" class="icon-gutter-grey"></i> ${person.name}</h3>
-        <div class="busy-label ${person.isDead ? 'dead' : (isBusy ? 'busy' : (isResting ? 'resting' : 'idle'))}">${person.isDead ? 'DEAD' : (isBusy ? `BUSY [${busyTimeLeft}h]` : (isResting ? 'RESTING' : t('idle')))}</div>
+        <div class="busy-label ${person.isDead ? 'dead' : (isBusy ? 'busy' : (isResting ? 'resting' : 'idle'))}">${person.isDead ? t('dead') : (isBusy ? `${t('busyFor')} [${busyTimeLeft}h]` : (isResting ? t('resting') : t('idle')))}</div>
       </div>
       ${hasSpecializationsUpgrade ? `
       <div class="specialization">
@@ -288,7 +287,7 @@ export function updatePartyDisplay() {
             <i data-lucide="user" class="avatar-icon ${person.isDead ? 'dead' : ''}"></i>
           </div>
           <table class="stats">
-            ${['health', 'hunger', 'thirst', 'energy'].map(stat => `
+            ${stats.map(stat => `
               <tr>
                 <td>${t(stat)}</td>
                 <td><div class="progress-bar"><div class="progress ${stat}-bar ${getProgressBarClass(person[stat])}" style="width: ${person[stat]}%;"></div></div></td>
@@ -411,7 +410,7 @@ export function performAction(personIndex, action) {
         person.hunger = Math.min(100, person.hunger + 25);
         gameState.food -= 5;
         gameState.busyUntil[personIndex] = currentTime + 1;
-        addLogEntry(`${person.name} ${t('eat').toLowerCase()} some ${t('food').toLowerCase()}.`, 'info');
+        addLogEntry(`${person.name} ${t('eat').toLowerCase()} ${t('food').toLowerCase()}.`, 'info');
       }
     },
     drink: () => {
@@ -419,12 +418,12 @@ export function performAction(personIndex, action) {
         person.thirst = Math.min(100, person.thirst + 25);
         gameState.water -= 3;
         gameState.busyUntil[personIndex] = currentTime + 1;
-        addLogEntry(`${person.name} ${t('drink').toLowerCase()} some ${t('water').toLowerCase()}.`, 'info');
+        addLogEntry(`${person.name} ${t('drink').toLowerCase()} ${t('water').toLowerCase()}.`, 'info');
       }
     },
     sleep: () => {
       gameState.busyUntil[personIndex] = -1;
-      addLogEntry(`${person.name} started ${t('rest').toLowerCase()}.`, 'info');
+      addLogEntry(`${person.name} ${t('rest').toLowerCase()}.`, 'info');
     }
   };
 

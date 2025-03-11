@@ -25,11 +25,22 @@ try {
 /**
  * Get translation for a key
  * @param {string} key - The translation key
+ * @param {object} [params] - Optional parameters for string interpolation
  * @returns {string} - The translated text
  */
-export function t(key) {
+export function t(key, params) {
   const translations = languages[currentLanguage];
-  return translations[key] || languages.en[key] || key;
+  let text = translations[key] || languages.en[key] || key;
+  
+  // Replace parameters in the string if provided
+  if (params && typeof params === 'object') {
+    Object.keys(params).forEach(param => {
+      const regex = new RegExp(`{${param}}`, 'g');
+      text = text.replace(regex, params[param]);
+    });
+  }
+  
+  return text;
 }
 
 /**

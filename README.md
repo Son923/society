@@ -16,7 +16,9 @@ Due to the use of ES6 modules, you can't just open the `index.html` file in your
 
 Want to contribute? Please do! Just open an issue for feature requests or submit a PR.
 
-The `docs/gamedesign.md` is a solid file to reference when using AI to make changes/additions as it contains a lot of rules/logic/best practices for this type of game.
+The `docs` directory contains important documentation:
+- `TRANSLATIONS.md` - Guidelines for adding and updating translations
+- `CHANGELOG.md` - Record of all notable changes to the game
 
 ## License & Copyright
 

@@ -3,6 +3,7 @@ import { addLogEntry } from './log.js';
 import { updateGameState } from './game.js';
 import { getIllnessChanceReduction } from './medicaltent.js';
 import { increaseContentment, decreaseContentment } from './contentment.js';
+import { t } from './translations/index.js';
 
 const WHISPERS = [
   "The shadows grow longer...",
@@ -44,85 +45,110 @@ const WHISPERS = [
 ];
 
 const RANDOM_EVENTS = [
-  { name: "Rainstorm", effect: (state) => { state.water += 50; return "A sudden rainstorm replenished your water supply! (+50 💧)"; }, type: "positive" },
+  { 
+    name: "Rainstorm", 
+    effect: (state) => { 
+      state.water += 50; 
+      return t('A sudden rainstorm replenished your water supply! (+{amount} 💧)', { amount: 50 }); 
+    }, 
+    type: "positive" 
+  },
   {
-    name: "Wild Animal Attack", effect: (state) => {
+    name: "Wild Animal Attack", 
+    effect: (state) => {
       const victim = state.party[Math.floor(Math.random() * state.party.length)];
       victim.health -= 20;
-      return `${victim.name} was attacked by a wild animal! (-20 health)`;
-    }, type: "negative"
+      return t('{name} was attacked by a wild animal! (-20 health)', { name: victim.name });
+    }, 
+    type: "negative"
   },
   {
-    name: "Food Spoilage", effect: (state) => {
+    name: "Food Spoilage", 
+    effect: (state) => {
       const spoiled = Math.floor(state.food * 0.2);
       state.food -= spoiled;
-      return `Some of your food has spoiled! (-${spoiled} 🍖)`;
-    }, type: "negative"
+      return t('Some of your food has spoiled! (-{amount} 🍖)', { amount: spoiled });
+    }, 
+    type: "negative"
   },
   {
-    name: "Lucky Find", effect: (state) => {
+    name: "Lucky Find", 
+    effect: (state) => {
       const amount = Math.floor(Math.random() * 46) + 5; // Random number between 5 and 50
       state.food += amount;
       state.water += amount;
-      return `You found a hidden cache of supplies! (+${amount} 🍖, +${amount} 💧)`;
-    }, type: "positive"
+      return t('You found a hidden cache of supplies! (+{amount} 🍖, +{amount} 💧)', { amount });
+    }, 
+    type: "positive"
   },
   {
-    name: "Windfall", effect: (state) => {
+    name: "Windfall", 
+    effect: (state) => {
       const woodAmount = Math.floor(Math.random() * 16) + 10; // Random amount between 10 and 25
       state.wood += woodAmount;
-      return `A fallen tree provided extra wood! (+${woodAmount} 🪵)`;
-    }, type: "positive"
+      return t('A fallen tree provided extra wood! (+{amount} 🪵)', { amount: woodAmount });
+    }, 
+    type: "positive"
   },
   {
-    name: "Mysterious Illness", effect: (state) => {
+    name: "Mysterious Illness", 
+    effect: (state) => {
       const illnessChanceReduction = getIllnessChanceReduction();
       if (Math.random() > illnessChanceReduction) {
         state.party.forEach(person => {
           person.health = Math.max(0, person.health - 5);
           person.energy = Math.max(0, person.energy - 10);
         });
-        return "A mysterious illness affects everyone in the group! (-5 health, -10 energy for all)";
+        return t('A mysterious illness affects everyone in the group! (-5 health, -10 energy for all)');
       }
-      return "A mysterious illness threatens the group, but the Medical Tent helps prevent its spread!";
-    }, type: "negative"
+      return t('A mysterious illness threatens the group, but the Medical Tent helps prevent its spread!');
+    }, 
+    type: "negative"
   },
   {
-    name: "Morale Boost", effect: (state) => {
+    name: "Morale Boost", 
+    effect: (state) => {
       state.party.forEach(person => {
         person.energy = Math.min(person.traits.maxEnergy, person.energy + 20);
       });
-      return "A surge of hope boosts everyone's morale! (+20 energy for all)";
-    }, type: "positive"
+      return t('A surge of hope boosts everyone\'s morale! (+20 energy for all)');
+    }, 
+    type: "positive"
   },
   {
-    name: "Tool Breaking", effect: (state) => {
+    name: "Tool Breaking", 
+    effect: (state) => {
       state.wood -= 10;
-      return "One of your tools broke! (-10 🪵)";
-    }, type: "negative"
+      return t('One of your tools broke! (-10 🪵)');
+    }, 
+    type: "negative"
   },
   {
-    name: "Bountiful Harvest", effect: (state) => {
+    name: "Bountiful Harvest", 
+    effect: (state) => {
       if (state.upgrades.farming) {
         const bonus = Math.floor(Math.random() * 30) + 20;
         state.food += bonus;
-        return `Your crops yielded an exceptional harvest! (+${bonus} 🍖)`;
+        return t('Your crops yielded an exceptional harvest! (+{amount} 🍖)', { amount: bonus });
       }
-      return "Your crops look healthy!";
-    }, type: "positive"
+      return t('Your crops look healthy!');
+    }, 
+    type: "positive"
   },
   {
-    name: "Water Contamination", effect: (state) => {
+    name: "Water Contamination", 
+    effect: (state) => {
       const lost = Math.floor(state.water * 0.3);
       state.water -= lost;
-      return `Some of your water got contaminated! (-${lost} 💧)`;
-    }, type: "negative"
+      return t('Some of your water got contaminated! (-{amount} 💧)', { amount: lost });
+    }, 
+    type: "negative"
   },
   {
     name: "Unexpected Visitor", effect: (state) => {
       const foodGain = Math.floor(Math.random() * 20) + 10;
       state.food += foodGain;
-      return `A friendly traveler shared some food with your group! (+${foodGain} 🍖)`;
+      return t('A friendly traveler shared some food with your group! (+{amount} 🍖)', { amount: foodGain });
     }, type: "positive"
   },
   {
@@ -130,7 +156,7 @@ const RANDOM_EVENTS = [
       state.party.forEach(person => {
         person.traits.maxEnergy += 10;
       });
-      return "You've found ways to improve your tools! (+10 max energy for all)";
+      return t('You\'ve found ways to improve your tools! (+10 max energy for all)');
     }, type: "positive"
   },
   {
@@ -138,30 +164,30 @@ const RANDOM_EVENTS = [
       state.party.forEach(person => {
         person.energy = Math.max(0, person.energy - 15);
       });
-      return "A spell of harsh weather has drained everyone's energy! (-15 energy for all)";
+      return t('A spell of harsh weather has drained everyone\'s energy! (-15 energy for all)');
     }, type: "negative"
   },
   {
     name: "Natural Spring", effect: (state) => {
       const waterGain = Math.floor(Math.random() * 40) + 20;
       state.water += waterGain;
-      return `You've discovered a natural spring! (+${waterGain} 💧)`;
+      return t('You\'ve discovered a natural spring! (+{amount} 💧)', { amount: waterGain });
     }, type: "positive"
   },
   {
     name: "Wildlife Stampede", effect: (state) => {
       const foodLoss = Math.floor(state.food * 0.15);
       state.food -= foodLoss;
-      return `A stampede of animals trampled some of your food stores! (-${foodLoss} 🍖)`;
+      return t('A stampede of animals trampled some of your food stores! (-{amount} 🍖)', { amount: foodLoss });
     }, type: "negative"
   },
   {
     name: "Ancient Knowledge", effect: (state) => {
       if (state.upgrades.farming) {
         state.farming.maxCrops += 5;
-        return "You've uncovered ancient farming techniques! (+5 max crop capacity)";
+        return t('You\'ve uncovered ancient farming techniques! (+5 max crop capacity)');
       }
-      return "You've found some interesting old documents.";
+      return t('You\'ve found some interesting old documents.');
     }, type: "positive"
   },
   {
@@ -172,9 +198,9 @@ const RANDOM_EVENTS = [
             if (crop) crop.plantedAt += 12; // Delay growth
           });
         });
-        return "An unexpected frost has slowed the growth of your crops! (12 hour delay)";
+        return t('An unexpected frost has slowed the growth of your crops! (12 hour delay)');
       }
-      return "There was an unexpected frost last night.";
+      return t('There was an unexpected frost last night.');
     }, type: "negative"
   },
   {
@@ -183,13 +209,13 @@ const RANDOM_EVENTS = [
       state.party.forEach(person => {
         person.energy = Math.min(person.traits.maxEnergy, person.energy + energyGain);
       });
-      return `A wave of community spirit energizes everyone! (+${energyGain} energy for all)`;
+      return t('A wave of community spirit energizes everyone! (+{amount} energy for all)', { amount: energyGain });
     }, type: "positive"
   },
   {
     name: "Tool Innovation", effect: (state) => {
       state.staminaPerAction = Math.max(5, state.staminaPerAction - 2);
-      return "You've found a way to make your tools more efficient! (-2 stamina cost per action)";
+      return t('You\'ve found a way to make your tools more efficient! (-2 stamina cost per action)');
     }, type: "positive"
   },
   {
@@ -197,7 +223,7 @@ const RANDOM_EVENTS = [
       state.party.forEach(person => {
         person.energy = Math.max(0, person.energy - 20);
       });
-      return "A solar flare disrupts sleep patterns! (-20 energy for all)";
+      return t('A solar flare disrupts sleep patterns! (-20 energy for all)');
     }, type: "negative"
   },
   {
@@ -205,7 +231,7 @@ const RANDOM_EVENTS = [
       const resourceGain = Math.floor(Math.random() * 20) + 10;
       state.wood += resourceGain;
       state.food += resourceGain;
-      return `A meteor shower brings rare minerals! (+${resourceGain} 🪵, +${resourceGain} 🍖)`;
+      return t('A meteor shower brings rare minerals! (+{amount} 🪵, +{amount} 🍖)', { amount: resourceGain });
     }, type: "positive"
   },
   {
@@ -213,23 +239,23 @@ const RANDOM_EVENTS = [
       if (state.upgrades.farming) {
         const foodLoss = Math.floor(state.food * 0.25);
         state.food -= foodLoss;
-        return `A locust swarm devours your crops! (-${foodLoss} 🍖)`;
+        return t('A locust swarm devours your crops! (-{amount} 🍖)', { amount: foodLoss });
       }
-      return "A locust swarm passes through the area.";
+      return t('A locust swarm passes through the area.');
     }, type: "negative"
   },
   {
     name: "Inspiring Dream", effect: (state) => {
       const luckyPerson = state.party[Math.floor(Math.random() * state.party.length)];
       luckyPerson.traits.maxEnergy += 20;
-      return `${luckyPerson.name} had an inspiring dream! (+20 max energy)`;
+      return t('{name} had an inspiring dream! (+20 max energy)', { name: luckyPerson.name });
     }, type: "positive"
   },
   {
     name: "Earthquake", effect: (state) => {
       const woodLoss = Math.floor(state.wood * 0.2);
       state.wood -= woodLoss;
-      return `An earthquake damages some structures! (-${woodLoss} 🪵)`;
+      return t('An earthquake damages some structures! (-{amount} 🪵)', { amount: woodLoss });
     }, type: "negative"
   },
   {
@@ -237,14 +263,14 @@ const RANDOM_EVENTS = [
       state.party.forEach(person => {
         person.health = Math.min(100, person.health + 10);
       });
-      return "A shooting star boosts everyone's spirits! (+10 health for all)";
+      return t('A shooting star boosts everyone\'s spirits! (+10 health for all)');
     }, type: "positive"
   },
   {
     name: "Time Anomaly", effect: (state) => {
       const timeJump = Math.floor(Math.random() * 12) + 1;
       state.hour = (state.hour + timeJump) % 24;
-      return `A strange time anomaly occurs! (${timeJump} hours pass instantly)`;
+      return t('A strange time anomaly occurs! ({amount} hours pass instantly)', { amount: timeJump });
     }, type: "neutral"
   },
   {
@@ -252,30 +278,35 @@ const RANDOM_EVENTS = [
       const randomPerson = state.party[Math.floor(Math.random() * state.party.length)];
       randomPerson.traits.maxEnergy += 30;
       randomPerson.health = 100;
-      return `${randomPerson.name} found an alien artifact! (+30 max energy, full health)`;
+      return t('{name} found an alien artifact! (+30 max energy, full health)', { name: randomPerson.name });
     }, type: "positive"
   },
   {
     name: "Cosmic Ray", effect: (state) => {
       const unluckyPerson = state.party[Math.floor(Math.random() * state.party.length)];
       unluckyPerson.health = Math.max(1, unluckyPerson.health - 30);
-      return `${unluckyPerson.name} was hit by a cosmic ray! (-30 health)`;
+      return t('{name} was hit by a cosmic ray! (-30 health)', { name: unluckyPerson.name });
     }, type: "negative"
   },
   {
-    name: "Quantum Fluctuation", effect: (state) => {
+    name: "Quantum Fluctuation", 
+    effect: (state) => {
       const resourceChange = Math.floor(Math.random() * 50) - 25; // -25 to +25
       state.food += resourceChange;
       state.water += resourceChange;
       state.wood += resourceChange;
-      return `A quantum fluctuation alters reality! (${resourceChange > 0 ? '+' : ''}${resourceChange} to all resources)`;
-    }, type: "neutral"
+      return t('A quantum fluctuation alters reality! ({sign}{amount} to all resources)', { 
+        sign: resourceChange > 0 ? '+' : '', 
+        amount: Math.abs(resourceChange) 
+      });
+    }, 
+    type: "neutral"
   },
   {
     name: "Moment of Hope",
     effect: (state) => {
       increaseContentment(10, "moment of hope");
-      return "The party shares stories of better times, boosting everyone's spirits. (+10 contentment)";
+      return t('The party shares stories of better times, boosting everyone\'s spirits. (+10 contentment)');
     },
     type: "positive"
   },
@@ -284,7 +315,7 @@ const RANDOM_EVENTS = [
     effect: (state) => {
       state.food += 30;
       increaseContentment(5, "successful hunt");
-      return "A successful hunt provides extra food and lifts the party's spirits! (+30 🥩, +5 contentment)";
+      return t('A successful hunt provides extra food and lifts the party\'s spirits! (+30 🥩, +5 contentment)');
     },
     type: "positive"
   },
@@ -292,7 +323,7 @@ const RANDOM_EVENTS = [
     name: "Beautiful Sunset",
     effect: (state) => {
       increaseContentment(8, "beautiful sunset");
-      return "A breathtaking sunset reminds everyone of the beauty still left in the world. (+8 contentment)";
+      return t('A breathtaking sunset reminds everyone of the beauty still left in the world. (+8 contentment)');
     },
     type: "positive"
   },
@@ -300,7 +331,7 @@ const RANDOM_EVENTS = [
     name: "Grim Reminder",
     effect: (state) => {
       decreaseContentment(10, "grim reminder");
-      return "The party stumbles upon evidence of the apocalypse's devastation, dampening everyone's mood. (-10 contentment)";
+      return t('The party stumbles upon evidence of the apocalypse\'s devastation, dampening everyone\'s mood. (-10 contentment)');
     },
     type: "negative"
   },
@@ -308,7 +339,7 @@ const RANDOM_EVENTS = [
     name: "Argument",
     effect: (state) => {
       decreaseContentment(8, "party argument");
-      return "An argument breaks out among party members over dwindling resources. (-8 contentment)";
+      return t('An argument breaks out among party members over dwindling resources. (-8 contentment)');
     },
     type: "negative"
   },
@@ -316,7 +347,7 @@ const RANDOM_EVENTS = [
     name: "Nightmare",
     effect: (state) => {
       decreaseContentment(5, "shared nightmare");
-      return "Several party members experience the same disturbing nightmare, leaving everyone on edge. (-5 contentment)";
+      return t('Several party members experience the same disturbing nightmare, leaving everyone on edge. (-5 contentment)');
     },
     type: "negative"
   },
@@ -327,7 +358,7 @@ const RANDOM_EVENTS = [
       state.water += 15;
       state.wood += 15;
       increaseContentment(12, "found supplies");
-      return "The party discovers a cache of supplies hidden away! (+15 🥩, +15 💧, +15 🌲, +12 contentment)";
+      return t('The party discovers a cache of supplies hidden away! (+15 🥩, +15 💧, +15 🌲, +12 contentment)');
     },
     type: "positive"
   },
@@ -336,7 +367,7 @@ const RANDOM_EVENTS = [
     effect: (state) => {
       state.wood -= 10;
       decreaseContentment(7, "harsh weather");
-      return "Harsh weather conditions force the party to burn extra wood for warmth and damages morale. (-10 🌲, -7 contentment)";
+      return t('Harsh weather conditions force the party to burn extra wood for warmth and damages morale. (-10 🌲, -7 contentment)');
     },
     type: "negative"
   }
@@ -350,7 +381,9 @@ export function checkForRandomEvent() {
     // 25% chance for a whisper instead of a regular event
     if (Math.random() < 0.25) {
       const whisper = WHISPERS[Math.floor(Math.random() * WHISPERS.length)];
-      addLogEntry(`The Whispers: "${whisper}"`, 'whisper');
+      const translatedWhisper = t(whisper);
+      const formattedMessage = t('The Whispers: "{whisper}"', { whisper: translatedWhisper });
+      addLogEntry(formattedMessage, 'whisper');
     } else {
       // Select a single random event with higher chance for positive events
       const eventTypeRoll = Math.random();
@@ -363,7 +396,9 @@ export function checkForRandomEvent() {
         event = RANDOM_EVENTS.filter(e => e.type === 'negative')[Math.floor(Math.random() * RANDOM_EVENTS.filter(e => e.type === 'negative').length)];
       }
       const message = event.effect(gameState);
-      addLogEntry(`Random Event: ${event.name}. ${message}`, event.type);
+      const translatedEventName = t(event.name);
+      const formattedMessage = t('Random Event: {eventName}. {message}', { eventName: translatedEventName, message: message });
+      addLogEntry(formattedMessage, event.type);
     }
 
     // Set the next event time (between 12 and 24 hours from now)

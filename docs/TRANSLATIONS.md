@@ -9,6 +9,24 @@ The translation files are located in the `javascript/translations` directory:
 - `vi.js` - Vietnamese translations
 - `index.js` - Translation system configuration
 
+## Recent Updates
+
+The following sections have been recently translated:
+
+### Random Events (March 2024)
+- Added translations for all random event names and messages
+- Added translations for whispers
+- Updated the random events system to use the translation function
+
+### Tutorial Messages (March 2024)
+- Added translations for all tutorial messages
+- Updated the tutorial system to use the translation function
+
+### Farming System (March 2024)
+- Added translations for crop names (wheat, carrot, bean)
+- Added translations for farming-related messages
+- Updated the farming UI to display translated crop names and messages
+
 ## How to Add or Update Translations
 
 ### 1. File Structure
@@ -62,6 +80,11 @@ export default {
   // Specializations
   specializations: {
     // Specialization names and descriptions
+  },
+  
+  // Farming
+  farming: {
+    // Crop names and farming-related messages
   }
 }
 ```
@@ -105,6 +128,7 @@ export default {
 3. **Test Changes**: After updating translations, test the game in all supported languages
 4. **Comments**: Add comments for complex or context-dependent translations
 5. **Avoid Hard-coding**: Never hard-code text in the game code; always use translation keys
+6. **Use Parameters**: For messages with variables, use the parameter format: `'Message with {variable}'` and pass the variable as a parameter to the translation function
 
 ### 5. Adding a New Language
 
@@ -129,6 +153,7 @@ To add support for a new language:
 1. **Missing Translations**: If a translation is missing, the game will fall back to English
 2. **Text Overflow**: If translated text is too long, consider using abbreviations or adjusting the UI
 3. **Special Characters**: Ensure proper encoding for special characters
+4. **Parameter Formatting**: When using parameters in translations, make sure they are properly formatted in all language files
 
 ## Need Help?
 

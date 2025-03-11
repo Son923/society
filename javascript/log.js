@@ -10,13 +10,23 @@ const MAX_LOG_ENTRIES = 100;
 
 /**
  * Adds a new log entry to the game state and updates the UI.
- * @param {string} message - The message to be logged.
- * @param {string} [type='info'] - The type of log entry (info, warning, error, success, whisper).
+ * @param {string} message - The message to be logged or translation key.
+ * @param {string|object} typeOrParams - The type of log entry or parameters for translation.
+ * @param {string} [optionalType] - The type of log entry if second param is translation params.
  */
-export function addLogEntry(message, type = 'info') {
+export function addLogEntry(message, typeOrParams = 'info', optionalType) {
+  let finalMessage = message;
+  let finalType = typeOrParams;
+
+  // Check if the second parameter is an object (translation parameters)
+  if (typeof typeOrParams === 'object') {
+    // If typeOrParams is an object, it contains translation parameters
+    finalType = optionalType || 'info';
+  }
+
   const entryData = {
-    message,
-    type,
+    message: finalMessage,
+    type: finalType,
     day: gameState.day,
     hour: gameState.hour
   };

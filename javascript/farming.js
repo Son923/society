@@ -2,6 +2,7 @@ import { gameState } from './settings.js';
 import { updateGameState } from './game.js';
 import { addLogEntry } from './log.js';
 import { createLucideIcons } from './utils.js';
+import { t } from './translations/index.js';
 
 /**
  * Defines the types of crops and their properties.
@@ -49,7 +50,7 @@ export function plantCrop(row, col) {
   const waterCost = CROP_TYPES[cropType].waterNeeded;
 
   if (gameState.water < waterCost) {
-    addLogEntry(`Not enough water to plant ${cropType}. Need ${waterCost} water.`, 'error');
+    addLogEntry(t('Not enough water to plant {cropType}. Need {amount} water.', { cropType: t(cropType), amount: waterCost }), 'error');
     return;
   }
 
@@ -66,7 +67,7 @@ export function plantCrop(row, col) {
     growthProgress: 0
   };
 
-  addLogEntry(`Planted ${cropType} (requires ${adjustedGrowthTime} hours to grow)`, 'success');
+  addLogEntry(t('Planted {cropType} (requires {hours} hours to grow)', { cropType: t(cropType), hours: adjustedGrowthTime }), 'success');
   updateGameState();
   updateFarmingUI();
 }
@@ -97,7 +98,7 @@ export function harvestCrop(row, col) {
   // Clear the plot
   gameState.farming.grid[row][col] = null;
 
-  addLogEntry(`Harvested ${cropType}: +${adjustedYield} food`, 'success');
+  addLogEntry(t('Harvested {cropType}: +{amount} food', { cropType: t(cropType), amount: adjustedYield }), 'success');
   updateGameState();
   updateFarmingUI();
 }
@@ -119,7 +120,7 @@ export function updateFarmingUI() {
   if (!farmingModule) return;
 
   farmingModule.innerHTML = `
-    <h2><i data-lucide="sprout" class="icon-dark"></i> Farming</h2>
+    <h2><i data-lucide="sprout" class="icon-dark"></i> ${t('Farming')}</h2>
     <div class="crop-picker">
       ${Object.keys(CROP_TYPES).map(cropType => createCropButton(cropType)).join('')}
     </div>
@@ -142,7 +143,7 @@ function createCropButton(cropType) {
   return `
     <button onclick="window.setPlantingCrop('${cropType}')" class="${gameState.farming.plantingCrop === cropType ? 'active' : ''}">
       <i data-lucide="${getCropIcon(cropType)}" class="icon ${getCropColor(cropType)}"></i>
-      ${cropType} [${CROP_TYPES[cropType].waterNeeded} <i data-lucide="droplet" class="icon blue"></i>]
+      ${t(cropType)} [${CROP_TYPES[cropType].waterNeeded} <i data-lucide="droplet" class="icon blue"></i>]
     </button>
   `;
 }
@@ -184,7 +185,7 @@ function createPlotElement(plot, row, col) {
   return `
     <div class="plot-cell ${growthClass}"
          onclick="${isReady ? `window.harvestCrop(${row}, ${col})` : ''}"
-         title="${plot.type}: ${progressPercent}% grown">
+         title="${t(plot.type)}: ${progressPercent}% ${t('grown')}">
       <i data-lucide="${getCropIcon(plot.type)}" class="icon ${getCropColor(plot.type)}"></i>
       ${!isReady ? `<div class="growth-progress">${progressPercent}%</div>` : ''}
     </div>
