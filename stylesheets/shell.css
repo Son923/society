@@ -1,5 +1,9 @@
 #game_screen {
   margin: 1em;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: var(--border-thickness) solid var(--text-color);
+  position: relative;
+  z-index: 10;
 
   header {
     display: flex;

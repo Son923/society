@@ -99,14 +99,10 @@ export const en = {
   available: "Available",
   locked: "Locked",
   requires: "Requires",
-  timeRemaining: "Time remaining",
+  timeRemaining: "Time Remaining",
   hours: "hours",
   noAvailableTechnologies: "No available technologies",
   noLockedTechnologies: "No locked technologies",
-  researchCompleted: "Research complete: {technology}",
-  cannotStartResearch: "Cannot start research on {technology}. Another research is already in progress.",
-  notEnoughKnowledge: "Not enough knowledge points to research {technology}.",
-  startedResearch: "Started research on {technology}.",
   
   // Technology names and descriptions
   improvedTools: "Improved Tools",

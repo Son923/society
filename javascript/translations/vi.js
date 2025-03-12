@@ -103,10 +103,6 @@ export const vi = {
   hours: "giờ",
   noAvailableTechnologies: "Không có công nghệ khả dụng",
   noLockedTechnologies: "Không có công nghệ bị khóa",
-  researchCompleted: "Nghiên cứu hoàn thành: {technology}",
-  cannotStartResearch: "Không thể bắt đầu nghiên cứu {technology}. Một nghiên cứu khác đang được tiến hành.",
-  notEnoughKnowledge: "Không đủ điểm kiến thức để nghiên cứu {technology}.",
-  startedResearch: "Đã bắt đầu nghiên cứu {technology}.",
   
   // Technology names and descriptions
   improvedTools: "Công cụ cải tiến",

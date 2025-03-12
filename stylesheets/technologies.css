@@ -25,6 +25,38 @@
     }
   }
 
+  /* Tech header with language selector */
+  .tech-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .language-selector {
+      display: flex;
+      margin-right: 10px;
+      
+      .lang-btn {
+        background: none;
+        border: 1px solid var(--text-color);
+        color: var(--text-color);
+        padding: 2px 6px;
+        margin-left: 5px;
+        cursor: pointer;
+        font-size: 0.7em;
+        font-weight: bold;
+      }
+      
+      .lang-btn.active {
+        background-color: var(--text-color);
+        color: var(--background-color);
+      }
+      
+      .lang-btn:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+
   /* Active research section */
   .active-research {
     border-bottom: var(--border-thickness) solid var(--text-color);

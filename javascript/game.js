@@ -483,7 +483,11 @@ function showGameOverScreen() {
  * Shows the game screen and hides others.
  */
 function showGameScreen() {
-  document.getElementById('game_start_screen').classList.add('hidden');
+  // Đảm bảo game_start_screen thực sự bị ẩn
+  const startScreen = document.getElementById('game_start_screen');
+  startScreen.classList.add('hidden');
+  startScreen.style.display = 'none';
+  
   document.getElementById('game_screen').classList.remove('hidden');
 }
 
@@ -493,7 +497,10 @@ function showGameScreen() {
 function showStartScreen() {
   document.getElementById('game_screen').classList.add('hidden');
   document.getElementById('game_over_screen').classList.add('hidden');
-  document.getElementById('game_start_screen').classList.remove('hidden');
+  
+  const startScreen = document.getElementById('game_start_screen');
+  startScreen.classList.remove('hidden');
+  startScreen.style.display = 'flex';
 }
 
 /**

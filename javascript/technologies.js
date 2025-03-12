@@ -10,7 +10,7 @@ import { addLogEntry } from './log.js';
 import { createLucideIcons } from './utils.js';
 import { saveGameState } from './storage.js';
 import { unlockSecondaryModule } from './upgrades.js';
-import { t } from './translations/index.js';
+import { t, getCurrentLanguage, setLanguage } from './translations/index.js';
 
 /**
  * Technology definitions with their costs, research times, effects, and prerequisites
@@ -18,10 +18,10 @@ import { t } from './translations/index.js';
 export const TECHNOLOGIES = {
   improvedTools: {
     id: "improvedTools",
-    get name() { return t("improvedTools"); },
+    name: "Improved Tools",
     knowledgeCost: 10,
     researchTime: 4, // hours
-    get effect() { return t("improvedToolsDesc"); },
+    effect: "Increase resource gathering by 20%",
     prerequisites: [],
     unlocked: false,
     researched: false,
@@ -30,10 +30,10 @@ export const TECHNOLOGIES = {
   },
   advancedFarming: {
     id: "advancedFarming",
-    get name() { return t("advancedFarming"); },
+    name: "Advanced Farming",
     knowledgeCost: 25,
     researchTime: 8,
-    get effect() { return t("advancedFarmingDesc"); },
+    effect: "50% more food from crops",
     prerequisites: ["improvedTools"],
     unlocked: false,
     researched: false,
@@ -42,10 +42,10 @@ export const TECHNOLOGIES = {
   },
   waterPurification: {
     id: "waterPurification",
-    get name() { return t("waterPurification"); },
+    name: "Water Purification",
     knowledgeCost: 25,
     researchTime: 8,
-    get effect() { return t("waterPurificationDesc"); },
+    effect: "20% less water consumption",
     prerequisites: ["improvedTools"],
     unlocked: false,
     researched: false,
@@ -54,10 +54,10 @@ export const TECHNOLOGIES = {
   },
   betterConstruction: {
     id: "betterConstruction",
-    get name() { return t("betterConstruction"); },
+    name: "Better Construction",
     knowledgeCost: 30,
     researchTime: 12,
-    get effect() { return t("betterConstructionDesc"); },
+    effect: "Buildings cost 25% less wood",
     prerequisites: ["improvedTools"],
     unlocked: false,
     researched: false,
@@ -66,10 +66,10 @@ export const TECHNOLOGIES = {
   },
   medicinalHerbs: {
     id: "medicinalHerbs",
-    get name() { return t("medicinalHerbs"); },
+    name: "Medicinal Herbs",
     knowledgeCost: 40,
     researchTime: 16,
-    get effect() { return t("medicinalHerbsDesc"); },
+    effect: "Party members heal 5% health per day",
     prerequisites: ["advancedFarming"],
     unlocked: false,
     researched: false,
@@ -98,10 +98,11 @@ export function initializeTechnologies() {
   // Update the UI
   updateTechnologiesUI();
   
-  // Listen for language change events
-  document.addEventListener('languageChanged', () => {
-    updateTechnologiesUI();
-  });
+  // Initialize filter buttons if they exist in the DOM
+  initTechnologyFilters();
+  
+  // Initialize language selector buttons
+  initTechLanguageSelector();
 }
 
 /**
@@ -118,13 +119,13 @@ export function startResearch(techId) {
 
   // Check if another research is already in progress
   if (gameState.activeResearch) {
-    addLogEntry(t('cannotStartResearch', { technology: tech.name }), 'error');
+    addLogEntry(`Cannot start research on ${tech.name}. Another research is already in progress.`, 'error');
     return;
   }
 
   // Check if the player can afford the knowledge cost
   if (gameState.knowledgePoints < tech.knowledgeCost) {
-    addLogEntry(t('notEnoughKnowledge', { technology: tech.name }), 'error');
+    addLogEntry(`Not enough knowledge points to research ${tech.name}.`, 'error');
     return;
   }
 
@@ -142,12 +143,11 @@ export function startResearch(techId) {
   // Set as active research
   gameState.activeResearch = {
     id: techId,
-    progress: 0,
     startTime: gameState.day * 24 + gameState.hour,
     totalTime: tech.researchTime
   };
 
-  addLogEntry(t('startedResearch', { technology: tech.name }), 'success');
+  addLogEntry(`Started research on ${tech.name}.`, 'success');
   updateGameState();
   updateTechnologiesUI();
   saveGameState();
@@ -189,33 +189,27 @@ export function updateResearchProgress() {
  */
 export function completeResearch(techId) {
   const tech = TECHNOLOGIES[techId];
-  if (!tech) return;
-  
-  // Mark as researched
-  tech.researched = true;
-  
-  // Store in gameState
-  if (!gameState.technologies[techId]) {
-    gameState.technologies[techId] = {};
+
+  if (!tech) {
+    return;
   }
+
+  // Mark as researched
   gameState.technologies[techId].researched = true;
-  
+  gameState.technologies[techId].progress = 1;
+
   // Clear active research
   gameState.activeResearch = null;
-  
+
   // Apply technology effects
   applyTechnologyEffects(techId);
-  
-  // Log the completion
-  addLogEntry(t('researchCompleted', { technology: t(techId) }), 'success');
-  
-  // Check if new technologies are now available
+
+  // Check for newly available technologies
   checkTechnologyAvailability();
-  
-  // Update UI
+
+  addLogEntry(`Research complete: ${tech.name}`, 'success');
+  updateGameState();
   updateTechnologiesUI();
-  
-  // Save game state
   saveGameState();
 }
 
@@ -274,7 +268,7 @@ export function applyTechnologyEffects(techId) {
 }
 
 /**
- * Updates the technologies UI to reflect current state
+ * Updates the technologies UI
  */
 export function updateTechnologiesUI() {
   const techModule = document.getElementById('technology-module');
@@ -350,7 +344,12 @@ export function updateTechnologiesUI() {
   // Create available technologies section
   const availableTechSection = document.createElement('div');
   availableTechSection.className = 'available-technologies';
-  availableTechSection.innerHTML = `<h3>${t('availableTechnologies')}</h3>`;
+  
+  // Create header for available technologies
+  const availableTechHeader = document.createElement('div');
+  availableTechHeader.className = 'available-technologies-header';
+  availableTechHeader.innerHTML = `<h3>${t('availableTechnologies')}</h3>`;
+  availableTechSection.appendChild(availableTechHeader);
   
   const availableTechList = document.createElement('div');
   availableTechList.className = 'tech-list';
@@ -468,22 +467,27 @@ export function showTechnologyModule(show = true) {
     techModule.classList.remove('mystery');
     techModule.innerHTML = `
       <div class="tech-header">
-        <h2 class="collapsible"><i data-lucide="microscope" class="icon-dark"></i> ${t('technologies')} <i data-lucide="chevron-up" class="toggle-icon"></i></h2>
+        <h2 class="collapsible"><i data-lucide="microscope" class="icon-dark"></i> <span data-i18n="technologies">${t('technologies')}</span> <i data-lucide="chevron-up" class="toggle-icon"></i></h2>
+        <div class="language-selector">
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="vi">VI</button>
+        </div>
       </div>
       <div class="module-content tech-content"></div>
     `;
     updateTechnologiesUI();
+    initTechLanguageSelector();
   } else {
     techModule.classList.add('mystery');
     techModule.innerHTML = `
       <div class="mystery-content">
-        <h2><i data-lucide="help-circle" class="icon-dark"></i> ${t('ancientKnowledge')}</h2>
-        <p>${t('ancientKnowledgeDesc')}</p>
+        <div class="icon"><i data-lucide="circle-help" class="icon gutter-grey"></i></div>
+        <div class="title">${t('ancientKnowledge')}</div>
+        <div class="description">${t('ancientKnowledgeDesc')}</div>
       </div>
     `;
   }
-  
-  // Create Lucide icons
+
   createLucideIcons();
 }
 
@@ -505,11 +509,10 @@ export function filterTechnologies(category = 'all') {
   const headerText = document.querySelector('.available-technologies-header h3');
   if (headerText) {
     if (category === 'all') {
-      headerText.textContent = 'AVAILABLE TECHNOLOGIES';
+      headerText.textContent = t('availableTechnologies');
     } else {
       // Capitalize first letter of category
-      const categoryName = category.toUpperCase();
-      headerText.textContent = `${categoryName} TECHNOLOGIES`;
+      headerText.textContent = t(category) + ' ' + t('technologies');
     }
   }
 
@@ -525,7 +528,7 @@ export function filterTechnologies(category = 'all') {
     availableTechSection.innerHTML = '';
     
     if (availableTechs.length === 0) {
-      availableTechSection.innerHTML = `<p class="no-techs">No available technologies</p>`;
+      availableTechSection.innerHTML = `<p class="no-techs">${t('noAvailableTechnologies')}</p>`;
     } else {
       availableTechs.forEach(tech => {
         const techItem = document.createElement('div');
@@ -538,17 +541,17 @@ export function filterTechnologies(category = 'all') {
             <div class="tech-icon">
               <i data-lucide="${tech.icon}" class="icon"></i>
             </div>
-            <div class="tech-name">${tech.name.toUpperCase()}</div>
-            <div class="tech-status ${canResearch ? 'available' : ''}">AVAILABLE</div>
+            <div class="tech-name">${t(tech.id)}</div>
+            <div class="tech-status ${canResearch ? 'available' : ''}">${t('available')}</div>
           </div>
           <div class="tech-content">
-            <div class="tech-effect">${tech.effect}</div>
+            <div class="tech-effect">${t(tech.id + 'Desc')}</div>
             <div class="tech-cost">
               <span class="knowledge"><i data-lucide="book" class="icon magenta"></i> ${tech.knowledgeCost}</span>
-              <span class="time"><i data-lucide="clock" class="icon"></i> ${tech.researchTime} hours</span>
+              <span class="time"><i data-lucide="clock" class="icon"></i> ${tech.researchTime} ${t('hours')}</span>
             </div>
             <button class="research-button" data-tech-id="${tech.id}" ${canResearch ? '' : 'disabled'}>
-              RESEARCH
+              ${t('research')}
             </button>
           </div>
         `;
@@ -570,7 +573,7 @@ export function filterTechnologies(category = 'all') {
     lockedTechSection.innerHTML = '';
     
     if (lockedTechs.length === 0) {
-      lockedTechSection.innerHTML = `<p class="no-techs">No locked technologies</p>`;
+      lockedTechSection.innerHTML = `<p class="no-techs">${t('noLockedTechnologies')}</p>`;
     } else {
       lockedTechs.forEach(tech => {
         const techItem = document.createElement('div');
@@ -581,13 +584,13 @@ export function filterTechnologies(category = 'all') {
             <div class="tech-icon">
               <i data-lucide="${tech.icon}" class="icon"></i>
             </div>
-            <div class="tech-name">${tech.name.toUpperCase()}</div>
-            <div class="tech-status locked">LOCKED</div>
+            <div class="tech-name">${t(tech.id)}</div>
+            <div class="tech-status locked">${t('locked')}</div>
           </div>
           <div class="tech-content">
-            <div class="tech-effect">${tech.effect}</div>
+            <div class="tech-effect">${t(tech.id + 'Desc')}</div>
             <div class="tech-prerequisites">
-              Requires: ${tech.prerequisites.map(prereq => TECHNOLOGIES[prereq].name).join(', ')}
+              ${t('requires')}: ${tech.prerequisites.map(prereq => t(prereq)).join(', ')}
             </div>
           </div>
         `;
@@ -626,6 +629,40 @@ export function initTechnologyFilters() {
       // Filter technologies
       const category = button.dataset.category;
       filterTechnologies(category);
+    });
+  });
+}
+
+/**
+ * Initialize language selector buttons in the technology module
+ */
+export function initTechLanguageSelector() {
+  const langButtons = document.querySelectorAll('.tech-header .language-selector .lang-btn');
+  
+  // Set the active button based on current language
+  const currentLang = getCurrentLanguage();
+  langButtons.forEach(btn => {
+    if (btn.dataset.lang === currentLang) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+  
+  // Add click event listeners to language buttons
+  langButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.lang;
+      
+      // Update active button
+      langButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      // Set the language
+      setLanguage(lang);
+      
+      // Update the UI
+      updateTechnologiesUI();
     });
   });
 } 
