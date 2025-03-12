@@ -496,11 +496,17 @@ function showGameScreen() {
  */
 function showStartScreen() {
   document.getElementById('game_screen').classList.add('hidden');
-  document.getElementById('game_over_screen').classList.add('hidden');
+  
+  // Đảm bảo game_over_screen hoàn toàn bị ẩn
+  const gameOverScreen = document.getElementById('game_over_screen');
+  gameOverScreen.classList.add('hidden');
+  gameOverScreen.style.display = 'none';
+  gameOverScreen.style.zIndex = '-1'; // Đặt z-index âm để đảm bảo nó không chặn tương tác
   
   const startScreen = document.getElementById('game_start_screen');
   startScreen.classList.remove('hidden');
   startScreen.style.display = 'flex';
+  startScreen.style.zIndex = '10'; // Đảm bảo start screen có z-index cao hơn
 }
 
 /**

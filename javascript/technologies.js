@@ -100,9 +100,6 @@ export function initializeTechnologies() {
   
   // Initialize filter buttons if they exist in the DOM
   initTechnologyFilters();
-  
-  // Initialize language selector buttons
-  initTechLanguageSelector();
 }
 
 /**
@@ -468,15 +465,10 @@ export function showTechnologyModule(show = true) {
     techModule.innerHTML = `
       <div class="tech-header">
         <h2 class="collapsible"><i data-lucide="microscope" class="icon-dark"></i> <span data-i18n="technologies">${t('technologies')}</span> <i data-lucide="chevron-up" class="toggle-icon"></i></h2>
-        <div class="language-selector">
-          <button class="lang-btn" data-lang="en">EN</button>
-          <button class="lang-btn" data-lang="vi">VI</button>
-        </div>
       </div>
       <div class="module-content tech-content"></div>
     `;
     updateTechnologiesUI();
-    initTechLanguageSelector();
   } else {
     techModule.classList.add('mystery');
     techModule.innerHTML = `
@@ -629,40 +621,6 @@ export function initTechnologyFilters() {
       // Filter technologies
       const category = button.dataset.category;
       filterTechnologies(category);
-    });
-  });
-}
-
-/**
- * Initialize language selector buttons in the technology module
- */
-export function initTechLanguageSelector() {
-  const langButtons = document.querySelectorAll('.tech-header .language-selector .lang-btn');
-  
-  // Set the active button based on current language
-  const currentLang = getCurrentLanguage();
-  langButtons.forEach(btn => {
-    if (btn.dataset.lang === currentLang) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
-  });
-  
-  // Add click event listeners to language buttons
-  langButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const lang = btn.dataset.lang;
-      
-      // Update active button
-      langButtons.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      
-      // Set the language
-      setLanguage(lang);
-      
-      // Update the UI
-      updateTechnologiesUI();
     });
   });
 } 

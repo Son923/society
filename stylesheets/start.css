@@ -16,11 +16,17 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 5; /* Đảm bảo z-index thấp hơn game_screen */
+  z-index: 5; /* Z-index mặc định */
+  
+  /* Đảm bảo khi hiển thị, nó có z-index cao hơn game-over-screen */
+  &:not(.hidden) {
+    z-index: 200;
+  }
 
   /* Đảm bảo lớp hidden hoạt động đúng cách */
   &.hidden {
     display: none !important;
+    z-index: -1 !important;
   }
 
   .splash_screen {
